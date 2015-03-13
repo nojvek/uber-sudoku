@@ -1,12 +1,24 @@
 html
 	head
 		title Uber Sudoku
-		link(type='text/css' href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' )
-		link(href='http://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css')
-		link(type='text/css' href='style.css' rel='stylesheet' )
+		
+		// Setup to work like a mobile app
+		meta(charset='utf8')
+		meta(name='viewport' content='user-scalable=0, initial-scale=1.0')
+		meta(name='mobile-web-app-capable', content='yes')
+		meta(name='apple-mobile-web-app-capable', content='yes')
+		meta(name='apple-mobile-web-app-status-bar-style', content='black-translucent')
+		meta(name='apple-mobile-web-app-title', content='Uber Sudoku')
+		link(href='css/img/logo.png', rel='apple-touch-icon')
 
+		// Scripts and Styles
+		link(type='text/css' href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' )
+		link(type='text/css' href='app.css' rel='stylesheet')
+		
 		script(type='text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
-		script(type='text/javascript' src='script.js')
+		script(src='//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js')
+		script(type='text/javascript' src='app.js')
+
 
 	body
 		h1 Uber Sudoku
