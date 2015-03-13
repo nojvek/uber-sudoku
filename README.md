@@ -1,2 +1,1 @@
-# uber-sudoku
-Uber Sudoku Challenge
+# Uber Sudoku Challenge
