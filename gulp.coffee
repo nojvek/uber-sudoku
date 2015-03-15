@@ -6,48 +6,73 @@ coffee = require 'gulp-coffee'
 stylus = require 'gulp-stylus'
 sourcemaps = require 'gulp-sourcemaps'
 debug = require 'gulp-debug'
+express = require 'express'
 livereload = require 'gulp-livereload'
-staticserver = require 'st'
-http = require 'http'
+embedLr = require 'gulp-embedlr'
 
 
-# tasks for languages
+###
+	Build Settings should mostly work as they are
+###
+serverPort = 8080
+buildDir = "www"
+srcDir = "src"
+
+
+###
+	We'd like to setup an environment where all our src files are watched
+	and transpiled immedately on file save. Not only that but the browser
+	is hot loaded with the latest code as we are making changes. 
+
+	TODO: Run jasmine tests everytime any js files are modified.
+###
 gulp.task 'jade', ->
 	gulp.src 'src/*.jade'
-	.pipe debug()
 	.pipe jade(pretty: true)
+	.pipe embedLr()
 	.on 'error', gutil.log
-	.pipe gulp.dest 'www'
-	.pipe livereload()
+	.pipe gulp.dest buildDir
 
-gulp.task 'stylus', ->
+gulp.task 'styl', ->
 	gulp.src 'src/*.styl'
-	.pipe debug()
 	.pipe stylus()
 	.on 'error', gutil.log
-	.pipe gulp.dest 'www'
-	.pipe livereload()
+	.pipe gulp.dest buildDir
 
 gulp.task 'coffee', ->
 	gulp.src 'src/*.coffee'
-	.pipe debug()
 	.pipe coffee(bare: true)
 	.on 'error', gutil.log
-	.pipe gulp.dest 'www'
-	.pipe livereload()
+	.pipe gulp.dest buildDir
+
+gulp.task 'assets', ->
+	gulp.src 'src/assets/*'
+	.pipe gulp.dest buildDir + "/assets"
 
 
-#tasks for watch, livereload and static server
+###
+	'You press a button and we do the rest'
+###
+gulp.task 'server',  ->
+	app = express()
+	app.use express.static __dirname + '/' + buildDir
+	app.listen serverPort
+
 gulp.task 'watch', ['server'], ->
-	livereload.listen basePath: 'www', port:8081, reloadPage: "www/index.html"
-	gulp.watch 'src/*', ['jade', 'coffee', 'stylus']
+	gulp.watch 'src/*.jade', ['jade']
+	gulp.watch 'src/*.coffee', ['coffee']
+	gulp.watch 'src/*.styl', ['styl']
+	gulp.watch 'src/assets/*', ['assets']
+	gulp.watch(buildDir + '/*').on('change', (e) -> livereload.changed(e.path))
+	livereload.listen()
 
 
-gulp.task 'server', (done) ->
-	http.createServer(
-		staticserver path: __dirname + '/www', index: 'index.html', cache: false
-	).listen(8080, done);
+###
+	Running "gulp" in command line will automatically setup src watching + live reload
+	Running "gulp build" will just output the www
 
+	TODO: add build task that automatically updates gh-pages branch with www contents
+###
 
-# Default task call every tasks created so far.
-gulp.task 'default', ['watch']
+gulp.task 'build', ['jade', 'coffee', 'styl', 'assets']
+gulp.task 'default', ['build', 'watch']
