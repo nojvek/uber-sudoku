@@ -1,0 +1,98 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: 'Open Sans', Arial, sans-serif;
+  font-size: 16px;
+  color: rgba(0,0,0,0.8);
+  background: url("assets/blur-bg.jpg") no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  background-size: cover;
+}
+.page-container {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  width: 420px;
+  padding-bottom: 40px;
+  padding-top: 10px;
+  background-color: rgba(255,255,255,0.4);
+  -webkit-border-radius: 20px;
+  border-radius: 20px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -o-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+}
+.page-container .title {
+  text-transform: uppercase;
+  text-align: center;
+  opacity: 0.5;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+  filter: alpha(opacity=50);
+  margin-bottom: 30px;
+}
+.page-container .sudoku-container {
+  position: relative;
+  border: 2px solid rgba(0,0,0,0.1);
+  width: 348px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+  text-align: center;
+}
+.page-container .sudoku-container:after {
+  display: block;
+  content: " ";
+  clear: both;
+}
+.page-container .sudoku-container .box-align {
+  float: left;
+}
+.page-container .sudoku-container .box-align:nth-child(3n+1) {
+  clear: both;
+}
+.page-container .sudoku-container .cell-holder,
+.page-container .sudoku-container .cell {
+  border: 1px solid rgba(0,0,0,0.1);
+}
+.page-container .sudoku-container .cell {
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  padding: 3px;
+  width: 30px;
+  height: 30px;
+}
+.page-container .sudoku-container .cell.input {
+  cursor: pointer;
+}
+.page-container .sudoku-container .cell.input .cell-value,
+.page-container .sudoku-container .cell.input .cell-hints {
+  color: #c80;
+}
+.page-container .sudoku-container .cell.input .cell-hints {
+  display: block;
+}
+.page-container .sudoku-container .cell.input .cell-value {
+  display: none;
+}
+.page-container .sudoku-container .cell .cell-value {
+  line-height: 30px;
+}
+.page-container .sudoku-container .cell .cell-hints {
+  display: none;
+}
+.page-container .sudoku-container .cell .cell-hints .cell-hint {
+  font-size: 8px;
+  height: 10px;
+  width: 10px;
+  line-height: 10px;
+}
