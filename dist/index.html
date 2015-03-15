@@ -1,0 +1,1184 @@
+
+<html>
+  <head>
+    <title>Uber Sudoku</title>
+    <!-- Setup to work like a mobile app-->
+    <meta charset="utf8"/>
+    <meta name="viewport" content="user-scalable=1, initial-scale=1.0, width=420"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-title" content="Uber Sudoku"/>
+    <link href="css/img/logo.png" rel="apple-touch-icon"/>
+    <!-- Scripts and Styles-->
+    <link type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:400,300" rel="stylesheet"/>
+    <link type="text/css" href="app.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/0.11.5/vue.min.js"></script>
+    <script src="app.js"></script>
+  </head>
+  <body>
+    <div class="background">
+      <div class="page-container">
+        <h1 class="title">Uber Sudoku</h1>
+        <div class="sudoku-container">
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+          <div class="cell-holder box-align">
+            <div class="cell box-align">
+              <div class="cell-value">1</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">2</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">3</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">4</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">5</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">6</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">7</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">8</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+            <div class="cell box-align">
+              <div class="cell-value">9</div>
+              <div class="cell-hints">
+                <div class="cell-hint box-align">1</div>
+                <div class="cell-hint box-align">2</div>
+                <div class="cell-hint box-align">3</div>
+                <div class="cell-hint box-align">4</div>
+                <div class="cell-hint box-align">5</div>
+                <div class="cell-hint box-align">6</div>
+                <div class="cell-hint box-align">7</div>
+                <div class="cell-hint box-align">8</div>
+                <div class="cell-hint box-align">9</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+<script type="text/javascript">document.write('<script src="' + (location.protocol || 'http:') + '//' + (location.hostname || 'localhost') + ':35729/livereload.js?snipver=1" type="text/javascript"><\/script>')</script>
+</body>
+</html>
