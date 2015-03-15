@@ -3,7 +3,7 @@ c = console
 $ ->
 	cells = $(".cell-value")
 	nums = _.range(1, 10)
-	counter = 0;
+	counter = 0
 	maxAnimationFrames = 50
 
 	randomizeNumbers = ->
