@@ -72,7 +72,7 @@ gulp.task 'gh-pages', ->
 		gutil.log stdout if stdout
 		gutil.log stderr if stderr
 
-	exec "git commit -am 'deploy to gh-pages'", logger
+	exec "git commit -am 'Auto deploy to gh-pages at " + new Date + "'", logger
 	exec "git subtree push --prefix dist dist gh-pages", logger
 
 ###
