@@ -16,7 +16,7 @@ embedLr = require 'gulp-embedlr'
 	Build Settings should mostly work as they are
 ###
 serverPort = 8080
-buildDir = "www"
+buildDir = "dist"
 srcDir = "src"
 
 
@@ -70,9 +70,14 @@ gulp.task 'watch', ['server'], ->
 
 ###
 	Running "gulp" in command line will automatically setup src watching + live reload
-	Running "gulp build" will just output the www
 
-	TODO: add build task that automatically updates gh-pages branch with www contents
+	Running "gulp build" will build into the dist folder.
+	
+	Running "gulp deploy" will build and commit into the gh-pages branch.
+		The site will be accessible at https://username.github.io/uber-sudoku
+		Setup tutorial: https://gist.github.com/cobyism/4730490
+
+	TODO: Add test runner in build code.
 ###
 
 gulp.task 'build', ['jade', 'coffee', 'styl', 'assets']
