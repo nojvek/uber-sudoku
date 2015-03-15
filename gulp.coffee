@@ -30,7 +30,7 @@ srcDir = "src"
 gulp.task 'jade', ->
 	gulp.src 'src/*.jade'
 	.pipe jade(pretty: true)
-	.pipe embedLr()
+	#.pipe embedLr()
 	.on 'error', gutil.log
 	.pipe gulp.dest buildDir
 
@@ -72,7 +72,7 @@ gulp.task 'gh-pages', ->
 		gutil.log stdout if stdout
 		gutil.log stderr if stderr
 
-	exec "git commit -am 'Auto deploy to gh-pages at " + new Date + "'", logger
+	#exec "git commit -am 'Auto deploy to gh-pages at " + new Date + "'", logger
 	exec "git subtree push --prefix dist dist gh-pages", logger
 
 ###
