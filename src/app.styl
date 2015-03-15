@@ -1,20 +1,77 @@
+// Theme Variables
+$fgColor = rgba(0,0,0,0.8)
+$bgColor = rgba(255,255,255, 0.4)
+$borderColor = rgba(0,0,0,0.1)
+$inputColor = #cc8800
+
 body
 	padding 0
 	margin 0
 	font-family 'Open Sans', Arial, sans-serif
 	font-size 16px
-	color rgba(0,0,0,0.8)
+	color $fgColor
 	background url('assets/blur-bg.jpg') no-repeat
 	background-size cover
 
-.page-wrapper
-	height 300px
+.page-container
+	box-sizing border-box
 	width 480px
 	margin 50px auto
-	padding 10px
-	background-color rgba(255,255,255, 0.3)
+	padding 60px
+	padding-top 10px
+	background-color $bgColor
 	border-radius 20px
 
 	.title
 		text-transform uppercase
 		text-align center
+		
+	.sudoku-container
+		position relative
+		border 1px solid $borderColor
+		width 348px
+		left 50%
+		transform translateX(-50%)
+		text-align center
+
+		
+		&:after
+			display block
+			content " "
+			clear both
+		
+		// Use CSS to align to 9x9 grid
+		.box-align
+			float left
+			
+			&:nth-child(3n+1)
+				clear both
+		
+
+		.cell-holder, .cell
+			border 1px solid $borderColor
+			
+		.cell
+			box-sizing content-box
+			padding 3px
+			width 30px
+			height 30px
+			
+			&.input
+				cursor pointer
+				
+				.cell-value
+					color $inputColor
+			
+		.cell-value
+			display block
+			line-height 30px
+			
+		.cell-hint
+			display none
+			font-size 10px
+			height 10px
+			width 10px
+			line-height 10px
+			letter-spacing 1px
+			color $inputColor
