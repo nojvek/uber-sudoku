@@ -4,6 +4,7 @@ gutil = require 'gulp-util'
 jade = require 'gulp-jade'
 coffee = require 'gulp-coffee'
 stylus = require 'gulp-stylus'
+nib = require 'nib'
 sourcemaps = require 'gulp-sourcemaps'
 debug = require 'gulp-debug'
 express = require 'express'
@@ -35,7 +36,7 @@ gulp.task 'jade', ->
 
 gulp.task 'styl', ->
 	gulp.src 'src/*.styl'
-	.pipe stylus()
+	.pipe stylus(use: nib())
 	.on 'error', gutil.log
 	.pipe gulp.dest buildDir
 
