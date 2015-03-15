@@ -73,10 +73,7 @@ gulp.task 'gh-pages', ->
 		gutil.log stderr if stderr
 
 	exec "git commit -am 'deploy to gh-pages'", logger
-
-	#gulp.commit('Deploy to gh-pages', args:'-a')
-
-	#git subtree push --prefix dist dist gh-pages
+	exec "subtree push --prefix dist dist gh-pages", logger
 
 ###
 	Running "gulp" in command line will automatically setup src watching + live reload
