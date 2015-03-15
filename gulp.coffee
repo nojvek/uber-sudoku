@@ -75,7 +75,7 @@ gulp.task 'watch', ['server'], ->
 	
 	Running "gulp deploy" will build and commit into the gh-pages branch.
 		The site will be accessible at https://username.github.io/uber-sudoku
-		Setup tutorial: https://gist.github.com/cobyism/4730490
+		Thanks to: http://spin.atomicobject.com/2014/03/28/deploy-git-subtrees/
 
 	TODO: Add test runner in build code.
 ###
