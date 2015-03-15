@@ -10,7 +10,7 @@ debug = require 'gulp-debug'
 express = require 'express'
 livereload = require 'gulp-livereload'
 embedLr = require 'gulp-embedlr'
-
+exec = require('child_process').exec
 
 ###
 	Build Settings should mostly work as they are
@@ -67,6 +67,16 @@ gulp.task 'watch', ['server'], ->
 	gulp.watch(buildDir + '/*').on('change', (e) -> livereload.changed(e.path))
 	livereload.listen()
 
+gulp.task 'gh-pages', ->
+	logger = (err, stdout, stderr) ->
+		gutil.log stdout if stdout
+		gutil.log stderr if stderr
+
+	exec "git commit -am 'deploy to gh-pages'", logger
+
+	#gulp.commit('Deploy to gh-pages', args:'-a')
+
+	#git subtree push --prefix dist dist gh-pages
 
 ###
 	Running "gulp" in command line will automatically setup src watching + live reload
@@ -81,4 +91,5 @@ gulp.task 'watch', ['server'], ->
 ###
 
 gulp.task 'build', ['jade', 'coffee', 'styl', 'assets']
+gulp.task 'deploy', ['build', 'gh-pages']
 gulp.task 'default', ['build', 'watch']
