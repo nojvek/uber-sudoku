@@ -9,7 +9,7 @@ sourcemaps = require 'gulp-sourcemaps'
 debug = require 'gulp-debug'
 express = require 'express'
 livereload = require 'gulp-livereload'
-embedLr = require 'gulp-embedlr'
+connectLr = require 'connect-livereload'
 exec = require('child_process').exec
 
 ###
@@ -30,7 +30,6 @@ srcDir = "src"
 gulp.task 'jade', ->
 	gulp.src 'src/*.jade'
 	.pipe jade(pretty: true)
-	.pipe embedLr()
 	.on 'error', gutil.log
 	.pipe gulp.dest buildDir
 
@@ -56,6 +55,7 @@ gulp.task 'assets', ->
 ###
 gulp.task 'server',  ->
 	app = express()
+	app.use connectLr()
 	app.use express.static __dirname + '/' + buildDir
 	app.listen serverPort
 
@@ -72,7 +72,6 @@ gulp.task 'gh-pages', ->
 		gutil.log stdout if stdout
 		gutil.log stderr if stderr
 
-	#exec "git commit -am 'Auto deploy to gh-pages at " + new Date + "'", logger
 	exec "git subtree push --prefix dist dist gh-pages", logger
 
 ###
