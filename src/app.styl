@@ -2,11 +2,28 @@
 
 // Theme Variables
 $fgColor = rgba(0,0,0,0.8)
-$bgColor = rgba(255,255,255, 0.4)
+$bgColor = rgba(255,255,255, 0.5)
 $borderColor = rgba(0,0,0,0.1)
 $inputColor = #cc8800
 
 
+//Mixins
+// with genGrid we can pregenerate CSS for 2,3,4 gridSizes
+genGrid($gridSize)
+	$cellSize = (10px * $gridSize)
+	width ((($cellSize + 8) * $gridSize + 2)* $gridSize)
+
+	.grid-align:nth-child({$gridSize}n+1)
+		clear both
+	
+	.cell			
+		width $cellSize
+		height $cellSize
+	
+	.cell-value
+		line-height $cellSize
+		
+	
 // Style
 body
 	padding 0
@@ -19,15 +36,13 @@ body
 
 .page-container
 	box-sizing border-box
-	width 420px
-	padding-bottom 40px
-	padding-top 10px
+	padding 20px
 	background-color $bgColor
 	border-radius 20px
 	position absolute
 	left 50%
-	top 50%
-	transform translateX(-50%) translateY(-50%)
+	//top 50%
+	transform translateX(-50%) //translateY(-50%)
 
 	.title
 		text-transform uppercase
@@ -35,13 +50,13 @@ body
 		opacity 0.5
 		margin-bottom 30px
 		
-	.sudoku-container
+	#sudoku-grid
 		position relative
 		border 2px solid $borderColor
-		width 348px
 		left 50%
 		transform translateX(-50%)
 		text-align center
+		box-sizing content-box
 
 		&:after
 			display block
@@ -49,21 +64,15 @@ body
 			clear both
 		
 		// Use CSS to align to 9x9 grid
-		.box-align
+		.grid-align
 			float left
-			
-			&:nth-child(3n+1)
-				clear both
 		
-
-		.cell-holder, .cell
+		.cell-container, .cell
 			border 1px solid $borderColor
 			
 		.cell
 			box-sizing content-box
 			padding 3px
-			width 30px
-			height 30px
 			
 			&.input
 				cursor pointer
@@ -77,9 +86,6 @@ body
 				.cell-value
 					display none
 					
-			
-			.cell-value
-				line-height 30px
 				
 			.cell-hints	
 				display none
@@ -89,3 +95,11 @@ body
 					height 10px
 					width 10px
 					line-height 10px
+		
+		// Dynamically generate classes for different grid sizes			
+		&.grid2		
+			genGrid(2)
+		&.grid3
+			genGrid(3)
+		&.grid4
+			genGrid(4)

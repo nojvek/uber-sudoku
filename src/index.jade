@@ -25,14 +25,18 @@ html
 		.background
 			.page-container
 				h1.title Uber Sudoku
-				.sudoku-container
-					- var nine = [1,2,3,4,5,6,7,8,9]
-					for i in nine
-						.cell-holder.box-align
-							for j in nine
-								.cell.box-align
+				#sudoku-grid
+					//- var chars = ['a', 'b', 'c', 'd']
+					- var chars = [1,2,3,4,5,6,7,8,9]
+					//- var chars = [0,1,2,3,4,5,6,7,8,9,'a', 'b', 'c', 'd', 'e', 'f']
+					for i in chars
+						.cell-container.grid-align
+							for j in chars
+								.cell.grid-align.inputx
 									.cell-value= j
 									.cell-hints
-										for k in nine
-											.cell-hint.box-align= k
+										for k in chars
+											.cell-hint.grid-align= k
 
+				#test-grid
+					.elem(v-repeat='i: nums' v-text="i")

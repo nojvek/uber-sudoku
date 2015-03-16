@@ -30,7 +30,7 @@ srcDir = "src"
 gulp.task 'jade', ->
 	gulp.src 'src/*.jade'
 	.pipe jade(pretty: true)
-	#.pipe embedLr()
+	.pipe embedLr()
 	.on 'error', gutil.log
 	.pipe gulp.dest buildDir
 

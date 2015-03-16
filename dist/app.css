@@ -13,20 +13,17 @@ body {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  width: 420px;
-  padding-bottom: 40px;
-  padding-top: 10px;
-  background-color: rgba(255,255,255,0.4);
+  padding: 20px;
+  background-color: rgba(255,255,255,0.5);
   -webkit-border-radius: 20px;
   border-radius: 20px;
   position: absolute;
   left: 50%;
-  top: 50%;
-  -webkit-transform: translateX(-50%) translateY(-50%);
-  -moz-transform: translateX(-50%) translateY(-50%);
-  -o-transform: translateX(-50%) translateY(-50%);
-  -ms-transform: translateX(-50%) translateY(-50%);
-  transform: translateX(-50%) translateY(-50%);
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
 }
 .page-container .title {
   text-transform: uppercase;
@@ -36,10 +33,9 @@ body {
   filter: alpha(opacity=50);
   margin-bottom: 30px;
 }
-.page-container .sudoku-container {
+.page-container #sudoku-grid {
   position: relative;
   border: 2px solid rgba(0,0,0,0.1);
-  width: 348px;
   left: 50%;
   -webkit-transform: translateX(-50%);
   -moz-transform: translateX(-50%);
@@ -47,52 +43,86 @@ body {
   -ms-transform: translateX(-50%);
   transform: translateX(-50%);
   text-align: center;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
 }
-.page-container .sudoku-container:after {
+.page-container #sudoku-grid:after {
   display: block;
   content: " ";
   clear: both;
 }
-.page-container .sudoku-container .box-align {
+.page-container #sudoku-grid .grid-align {
   float: left;
 }
-.page-container .sudoku-container .box-align:nth-child(3n+1) {
-  clear: both;
-}
-.page-container .sudoku-container .cell-holder,
-.page-container .sudoku-container .cell {
+.page-container #sudoku-grid .cell-container,
+.page-container #sudoku-grid .cell {
   border: 1px solid rgba(0,0,0,0.1);
 }
-.page-container .sudoku-container .cell {
+.page-container #sudoku-grid .cell {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   padding: 3px;
-  width: 30px;
-  height: 30px;
 }
-.page-container .sudoku-container .cell.input {
+.page-container #sudoku-grid .cell.input {
   cursor: pointer;
 }
-.page-container .sudoku-container .cell.input .cell-value,
-.page-container .sudoku-container .cell.input .cell-hints {
+.page-container #sudoku-grid .cell.input .cell-value,
+.page-container #sudoku-grid .cell.input .cell-hints {
   color: #c80;
 }
-.page-container .sudoku-container .cell.input .cell-hints {
+.page-container #sudoku-grid .cell.input .cell-hints {
   display: block;
 }
-.page-container .sudoku-container .cell.input .cell-value {
+.page-container #sudoku-grid .cell.input .cell-value {
   display: none;
 }
-.page-container .sudoku-container .cell .cell-value {
-  line-height: 30px;
-}
-.page-container .sudoku-container .cell .cell-hints {
+.page-container #sudoku-grid .cell .cell-hints {
   display: none;
 }
-.page-container .sudoku-container .cell .cell-hints .cell-hint {
+.page-container #sudoku-grid .cell .cell-hints .cell-hint {
   font-size: 8px;
   height: 10px;
   width: 10px;
   line-height: 10px;
+}
+.page-container #sudoku-grid.grid2 {
+  width: 116px;
+}
+.page-container #sudoku-grid.grid2 .grid-align:nth-child(2n+1) {
+  clear: both;
+}
+.page-container #sudoku-grid.grid2 .cell {
+  width: 20px;
+  height: 20px;
+}
+.page-container #sudoku-grid.grid2 .cell-value {
+  line-height: 20px;
+}
+.page-container #sudoku-grid.grid3 {
+  width: 348px;
+}
+.page-container #sudoku-grid.grid3 .grid-align:nth-child(3n+1) {
+  clear: both;
+}
+.page-container #sudoku-grid.grid3 .cell {
+  width: 30px;
+  height: 30px;
+}
+.page-container #sudoku-grid.grid3 .cell-value {
+  line-height: 30px;
+}
+.page-container #sudoku-grid.grid4 {
+  width: 776px;
+}
+.page-container #sudoku-grid.grid4 .grid-align:nth-child(4n+1) {
+  clear: both;
+}
+.page-container #sudoku-grid.grid4 .cell {
+  width: 40px;
+  height: 40px;
+}
+.page-container #sudoku-grid.grid4 .cell-value {
+  line-height: 40px;
 }
