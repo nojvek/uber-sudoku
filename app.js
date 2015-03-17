@@ -25,6 +25,7 @@ $(function() {
     }
   };
   sudokuGrid = new SudokuGrid(constants.gridSize);
+  sudokuGrid.randomize();
   return sudokuGridView = new Vue({
     el: "#sudoku-grid",
     data: sudokuGrid,
