@@ -22,7 +22,7 @@
     <div class="background">
       <div class="page-container">
         <h1 class="title">Uber Sudoku</h1>
-        <div id="sudoku-grid">
+        <div id="sudoku-grid" v-attr="class: 'grid' + gridSize">
           <div v-repeat="numContainer: loop(gridSize)" class="cell-container grid-align">
             <div v-repeat="numCell: loop(gridSize)" class="cell grid-align inputx">
               <div v-text="getCellValue(grid, numContainer, numCell)" class="cell-value"></div>
