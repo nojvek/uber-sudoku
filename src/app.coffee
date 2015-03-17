@@ -2,6 +2,9 @@ c = console
 
 constants =
 	gridSize: 3
+	numSwaps: 50
+
+sudokuGridView = null
 
 $ ->
 	cells = $(".cell-value")
@@ -18,7 +21,8 @@ $ ->
 	#randomizeNumbers()
 
 	sudokuGrid = new SudokuGrid(constants.gridSize)
-	$("#sudoku-grid").addClass("grid" + constants.gridSize)
+	sudokuGrid.randomize()
+	#$("#sudoku-grid").addClass("grid" + constants.gridSize)
 
 	sudokuGridView = new Vue
 		el: "#sudoku-grid"
@@ -61,15 +65,15 @@ class SudokuGrid
 		charA = 97
 		switch gridSize
 			when 2
-				@gridChars = (String.fromCharCode(i) for i in _.range(charA, charA + 4))
+				@gridChars = (String.fromCharCode(i) for i in [charA ... charA + 4] by 1)
 			when 3
-				@gridChars = (i.toString() for i in _.range(1, 10))
+				@gridChars = (i.toString() for i in [1 ... 10] by 1)
 			when 4
-				@gridChars = (i.toString() for i in _.range(0, 10))
-				@gridChars = @gridChars.concat (String.fromCharCode(i) for i in _.range(charA, charA + 6))
+				@gridChars = (i.toString() for i in [0 ... 10] by 1)
+				@gridChars = @gridChars.concat (String.fromCharCode(i) for i in [charA ... charA + 6] by 1)
 		
 		@gridSize = gridSize
-		@grid = @createIdentityGrid()
+		@grid = @identity()
 
 
 	###
@@ -86,17 +90,63 @@ class SudokuGrid
 		678912345
 		912345678
 	###
-	createIdentityGrid: ->
+	identity: ->
 		@grid = []
-		len = @gridSize *  @gridSize
 		size = @gridSize
+		len = size * size
 
-		for i in _.range(0, len)
+		for i in [0...len] by 1
 			row = []
-			for j in _.range(0, len)
+			for j in [0...len] by 1
 				index = ((i * size + j + Math.floor(i / size)) % len)
 				row.push(@gridChars[index])
 			@grid.push(row)
 		
+		return @grid
+
+	###
+	Randomize by swapping rows and columns between a cell-container
+	###
+	randomize: ->
+		size = @gridSize
+		len = size * size
+		grid = @grid
+
+		swap = (num1, num2, rowMul, colMul) ->
+			row1 = row2 = col1 = col2 = 0
+			if colMul == 1
+				row1 = num1
+				row2 = num2
+			else if rowMul = 1
+				col1 = num1
+				col2 = num2
+
+			c.log row1, row2, col1, col2, rowMul, colMul
+
+			for i in [0...len] by 1
+				rowAdd = i * rowMul
+				colAdd = i * colMul
+				temp = grid[row1 + rowAdd][col1 + colAdd]
+				grid[row1 + rowAdd][col1 + colAdd] = grid[row2 + rowAdd][col2 + colAdd]
+				grid[row2 + rowAdd][col2 + colAdd] = temp
+
+
+		#for i in [0...constants.numSwaps] by 1
+		#swap rows
+		for numCell in [0...size] by 1
+			offset = numCell * size			
+			num1 = Math.floor(Math.random() * size) + offset
+			num2 = (num1 + 1) % size + offset
+			swap(num1, num2, 0, 1)
+
+		#swap cols
+		for numCell in [0...size] by 1
+			offset = numCell * size
+			num1 = Math.floor(Math.random() * size) + offset
+			num2 = (num1 + 1) % size + offset
+			swap(num1, num2, 1, 0)
+
+
+		#swap cols
 		return @grid
 

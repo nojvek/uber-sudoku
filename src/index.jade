@@ -24,7 +24,7 @@ html
 		.background
 			.page-container
 				h1.title Uber Sudoku
-				#sudoku-grid
+				#sudoku-grid(v-attr="class: 'grid' + gridSize")
 					.cell-container.grid-align(v-repeat="numContainer: loop(gridSize)")
 						.cell.grid-align.inputx(v-repeat="numCell: loop(gridSize)")
 							.cell-value(v-text="getCellValue(grid, numContainer, numCell)")

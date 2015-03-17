@@ -1,13 +1,16 @@
-var SudokuGrid, c, constants;
+var SudokuGrid, c, constants, sudokuGridView;
 
 c = console;
 
 constants = {
-  gridSize: 3
+  gridSize: 3,
+  numSwaps: 50
 };
 
+sudokuGridView = null;
+
 $(function() {
-  var cells, counter, maxAnimationFrames, nums, randomizeNumbers, sudokuGrid, sudokuGridView;
+  var cells, counter, maxAnimationFrames, nums, randomizeNumbers, sudokuGrid;
   cells = $(".cell-value");
   nums = _.range(1, 10);
   counter = 0;
@@ -22,7 +25,7 @@ $(function() {
     }
   };
   sudokuGrid = new SudokuGrid(constants.gridSize);
-  $("#sudoku-grid").addClass("grid" + constants.gridSize);
+  sudokuGrid.randomize();
   return sudokuGridView = new Vue({
     el: "#sudoku-grid",
     data: sudokuGrid,
@@ -77,11 +80,9 @@ SudokuGrid = (function() {
     switch (gridSize) {
       case 2:
         this.gridChars = (function() {
-          var k, len1, ref, results;
-          ref = _.range(charA, charA + 4);
+          var k, ref, ref1, results;
           results = [];
-          for (k = 0, len1 = ref.length; k < len1; k++) {
-            i = ref[k];
+          for (i = k = ref = charA, ref1 = charA + 4; k < ref1; i = k += 1) {
             results.push(String.fromCharCode(i));
           }
           return results;
@@ -89,11 +90,9 @@ SudokuGrid = (function() {
         break;
       case 3:
         this.gridChars = (function() {
-          var k, len1, ref, results;
-          ref = _.range(1, 10);
+          var k, results;
           results = [];
-          for (k = 0, len1 = ref.length; k < len1; k++) {
-            i = ref[k];
+          for (i = k = 1; k < 10; i = k += 1) {
             results.push(i.toString());
           }
           return results;
@@ -101,28 +100,24 @@ SudokuGrid = (function() {
         break;
       case 4:
         this.gridChars = (function() {
-          var k, len1, ref, results;
-          ref = _.range(0, 10);
+          var k, results;
           results = [];
-          for (k = 0, len1 = ref.length; k < len1; k++) {
-            i = ref[k];
+          for (i = k = 0; k < 10; i = k += 1) {
             results.push(i.toString());
           }
           return results;
         })();
         this.gridChars = this.gridChars.concat((function() {
-          var k, len1, ref, results;
-          ref = _.range(charA, charA + 6);
+          var k, ref, ref1, results;
           results = [];
-          for (k = 0, len1 = ref.length; k < len1; k++) {
-            i = ref[k];
+          for (i = k = ref = charA, ref1 = charA + 6; k < ref1; i = k += 1) {
             results.push(String.fromCharCode(i));
           }
           return results;
         })());
     }
     this.gridSize = gridSize;
-    this.grid = this.createIdentityGrid();
+    this.grid = this.identity();
   }
 
 
@@ -141,22 +136,64 @@ SudokuGrid = (function() {
   		912345678
    */
 
-  SudokuGrid.prototype.createIdentityGrid = function() {
-    var i, index, j, k, l, len, len1, len2, ref, ref1, row, size;
+  SudokuGrid.prototype.identity = function() {
+    var i, index, j, k, l, len, ref, ref1, row, size;
     this.grid = [];
-    len = this.gridSize * this.gridSize;
     size = this.gridSize;
-    ref = _.range(0, len);
-    for (k = 0, len1 = ref.length; k < len1; k++) {
-      i = ref[k];
+    len = size * size;
+    for (i = k = 0, ref = len; k < ref; i = k += 1) {
       row = [];
-      ref1 = _.range(0, len);
-      for (l = 0, len2 = ref1.length; l < len2; l++) {
-        j = ref1[l];
+      for (j = l = 0, ref1 = len; l < ref1; j = l += 1) {
         index = (i * size + j + Math.floor(i / size)) % len;
         row.push(this.gridChars[index]);
       }
       this.grid.push(row);
+    }
+    return this.grid;
+  };
+
+
+  /*
+  	Randomize by swapping rows and columns between a cell-container
+   */
+
+  SudokuGrid.prototype.randomize = function() {
+    var grid, k, l, len, num1, num2, numCell, offset, ref, ref1, size, swap;
+    size = this.gridSize;
+    len = size * size;
+    grid = this.grid;
+    swap = function(num1, num2, rowMul, colMul) {
+      var col1, col2, colAdd, i, k, ref, results, row1, row2, rowAdd, temp;
+      row1 = row2 = col1 = col2 = 0;
+      if (colMul === 1) {
+        row1 = num1;
+        row2 = num2;
+      } else if (rowMul = 1) {
+        col1 = num1;
+        col2 = num2;
+      }
+      c.log(row1, row2, col1, col2, rowMul, colMul);
+      results = [];
+      for (i = k = 0, ref = len; k < ref; i = k += 1) {
+        rowAdd = i * rowMul;
+        colAdd = i * colMul;
+        temp = grid[row1 + rowAdd][col1 + colAdd];
+        grid[row1 + rowAdd][col1 + colAdd] = grid[row2 + rowAdd][col2 + colAdd];
+        results.push(grid[row2 + rowAdd][col2 + colAdd] = temp);
+      }
+      return results;
+    };
+    for (numCell = k = 0, ref = size; k < ref; numCell = k += 1) {
+      offset = numCell * size;
+      num1 = Math.floor(Math.random() * size) + offset;
+      num2 = (num1 + 1) % size + offset;
+      swap(num1, num2, 0, 1);
+    }
+    for (numCell = l = 0, ref1 = size; l < ref1; numCell = l += 1) {
+      offset = numCell * size;
+      num1 = Math.floor(Math.random() * size) + offset;
+      num2 = (num1 + 1) % size + offset;
+      swap(num1, num2, 1, 0);
     }
     return this.grid;
   };
