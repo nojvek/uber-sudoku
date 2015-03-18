@@ -134,17 +134,16 @@ class SudokuGrid
 		#for i in [0...constants.numSwaps] by 1
 		#swap rows
 		for numCell in [0...size] by 1
-			offset = numCell * size			
-			num1 = Math.floor(Math.random() * size) + offset
-			num2 = (num1 + 1) % size + offset
-			swap(num1, num2, 0, 1)
+			if Math.random() > 0.5 
+				offset = numCell * size			
+				num1 = Math.floor(Math.random() * size) + offset
+				num2 = (num1 + 1) % size + offset
 
-		#swap cols
-		for numCell in [0...size] by 1
-			offset = numCell * size
-			num1 = Math.floor(Math.random() * size) + offset
-			num2 = (num1 + 1) % size + offset
-			swap(num1, num2, 1, 0)
+			if Math.random() > 0.5 
+				num1 = Math.floor(Math.random() * size) + offset
+				num2 = (num1 + 1) % size + offset
+				swap(num1, num2, 1, 0)
+
 
 
 		#swap cols

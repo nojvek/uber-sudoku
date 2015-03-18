@@ -1,12 +1,10 @@
 c = console
 gulp = require 'gulp'
-gutil = require 'gulp-util'
 jade = require 'gulp-jade'
 coffee = require 'gulp-coffee'
 stylus = require 'gulp-stylus'
 nib = require 'nib'
 sourcemaps = require 'gulp-sourcemaps'
-debug = require 'gulp-debug'
 express = require 'express'
 livereload = require 'gulp-livereload'
 connectLr = require 'connect-livereload'
@@ -27,22 +25,25 @@ srcDir = "src"
 
 	TODO: Run jasmine tests everytime any js files are modified.
 ###
+handle = (stream) ->
+	stream.on 'error', (err) ->
+		c.log err
+		stream.end()
+	return stream
+
 gulp.task 'jade', ->
 	gulp.src 'src/*.jade'
-	.pipe jade(pretty: true)
-	.on 'error', gutil.log
+	.pipe handle(jade(pretty: true))
 	.pipe gulp.dest buildDir
 
 gulp.task 'styl', ->
 	gulp.src 'src/*.styl'
-	.pipe stylus(use: nib())
-	.on 'error', gutil.log
+	.pipe handle(stylus(use: nib()))
 	.pipe gulp.dest buildDir
 
 gulp.task 'coffee', ->
 	gulp.src 'src/*.coffee'
-	.pipe coffee(bare: true)
-	.on 'error', gutil.log
+	.pipe handle(coffee(bare: true))
 	.pipe gulp.dest buildDir
 
 gulp.task 'assets', ->
