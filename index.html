@@ -4,7 +4,7 @@
     <title>Uber Sudoku</title>
     <!-- Setup to work like a mobile app-->
     <meta charset="utf8"/>
-    <meta name="viewport" content="user-scalable=1, initial-scale=1.0, width=420"/>
+    <meta name="viewport" content="user-scalable=0, initial-scale=0.8, width=400"/>
     <meta name="mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-capable" content="yes"/>
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
@@ -19,16 +19,15 @@
     <script src="app.js"></script>
   </head>
   <body>
-    <div class="background">
-      <div class="page-container">
-        <h1 class="title">Uber Sudoku</h1>
-        <div id="sudoku-grid" v-attr="class: 'grid' + gridSize">
-          <div v-repeat="numContainer: loop(gridSize)" class="cell-container grid-align">
-            <div v-repeat="numCell: loop(gridSize)" class="cell grid-align inputx">
-              <div v-text="getCellValue(grid, numContainer, numCell)" class="cell-value"></div>
-              <div class="cell-hints">
-                <div v-repeat="numHint: loop(gridSize)" v-text="numHint" class="cell-hint grid-align"></div>
-              </div>
+    <div class="sudoku-container">
+      <div class="blur-bg"></div>
+      <h1 class="title">Uber Sudoku</h1>
+      <div id="sudoku-grid" v-attr="class: 'grid' + gridSize">
+        <div v-repeat="numContainer: loop(gridSize)" class="cell-container grid-align">
+          <div v-repeat="numCell: loop(gridSize)" class="cell grid-align inputx">
+            <div v-text="getCellValue(grid, numContainer, numCell)" class="cell-value"></div>
+            <div class="cell-hints">
+              <div v-repeat="numHint: loop(gridSize)" v-text="numHint" class="cell-hint grid-align"></div>
             </div>
           </div>
         </div>
