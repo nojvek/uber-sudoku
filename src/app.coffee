@@ -2,11 +2,18 @@ c = console
 
 constants =
 	gridSize: 3
-	numSwaps: 50
+	numSwaps: 10
 
 sudokuGridView = null
 
 $ ->
+
+	#add View Port tag
+	#containerWidth  = $(".sudoku-container").width()
+	#$('head').append("<meta name='viewport' content=width='" + containerWidth + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>")
+
+
+
 	cells = $(".cell-value")
 	nums = _.range(1, 10)
 	counter = 0
@@ -131,18 +138,17 @@ class SudokuGrid
 				grid[row2 + rowAdd][col2 + colAdd] = temp
 
 
-		#for i in [0...constants.numSwaps] by 1
-		#swap rows
-		for numCell in [0...size] by 1
-			if Math.random() > 0.5 
-				offset = numCell * size			
-				num1 = Math.floor(Math.random() * size) + offset
-				num2 = (num1 + 1) % size + offset
+		for i in [0...constants.numSwaps] by 1
+			for numCell in [0...size] by 1
+				if Math.random() > 0.5 
+					offset = numCell * size			
+					num1 = Math.floor(Math.random() * size) + offset
+					num2 = (num1 + 1) % size + offset
 
-			if Math.random() > 0.5 
-				num1 = Math.floor(Math.random() * size) + offset
-				num2 = (num1 + 1) % size + offset
-				swap(num1, num2, 1, 0)
+				if Math.random() > 0.5 
+					num1 = Math.floor(Math.random() * size) + offset
+					num2 = (num1 + 1) % size + offset
+					swap(num1, num2, 1, 0)
 
 
 

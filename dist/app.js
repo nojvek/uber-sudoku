@@ -4,7 +4,7 @@ c = console;
 
 constants = {
   gridSize: 3,
-  numSwaps: 50
+  numSwaps: 10
 };
 
 sudokuGridView = null;
@@ -158,7 +158,7 @@ SudokuGrid = (function() {
    */
 
   SudokuGrid.prototype.randomize = function() {
-    var grid, k, len, num1, num2, numCell, offset, ref, size, swap;
+    var grid, i, k, l, len, num1, num2, numCell, offset, ref, ref1, size, swap;
     size = this.gridSize;
     len = size * size;
     grid = this.grid;
@@ -183,16 +183,18 @@ SudokuGrid = (function() {
       }
       return results;
     };
-    for (numCell = k = 0, ref = size; k < ref; numCell = k += 1) {
-      if (Math.random() > 0.5) {
-        offset = numCell * size;
-        num1 = Math.floor(Math.random() * size) + offset;
-        num2 = (num1 + 1) % size + offset;
-      }
-      if (Math.random() > 0.5) {
-        num1 = Math.floor(Math.random() * size) + offset;
-        num2 = (num1 + 1) % size + offset;
-        swap(num1, num2, 1, 0);
+    for (i = k = 0, ref = constants.numSwaps; k < ref; i = k += 1) {
+      for (numCell = l = 0, ref1 = size; l < ref1; numCell = l += 1) {
+        if (Math.random() > 0.5) {
+          offset = numCell * size;
+          num1 = Math.floor(Math.random() * size) + offset;
+          num2 = (num1 + 1) % size + offset;
+        }
+        if (Math.random() > 0.5) {
+          num1 = Math.floor(Math.random() * size) + offset;
+          num2 = (num1 + 1) % size + offset;
+          swap(num1, num2, 1, 0);
+        }
       }
     }
     return this.grid;

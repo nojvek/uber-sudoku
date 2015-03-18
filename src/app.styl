@@ -1,9 +1,9 @@
 @import 'nib'
 
 // Theme Variables
-$fgColor = rgba(0,0,0,0.8)
-$bgColor = rgba(255,255,255, 0.5)
-$borderColor = rgba(0,0,0,0.1)
+$fgColor = #fff
+$bgColor = rgba(0,0,0, 0.5)
+$borderColor = rgba(255,255,255,0.2)
 $inputColor = #cc8800
 
 
@@ -11,7 +11,10 @@ $inputColor = #cc8800
 // with genGrid we can pregenerate CSS for 2,3,4 gridSizes
 genGrid($gridSize)
 	$cellSize = (10px * $gridSize)
-	width ((($cellSize + 8) * $gridSize + 2)* $gridSize)
+	$width = ((($cellSize + 8) * $gridSize + 2)* $gridSize)
+
+	width ($width)
+	//transform scale($scale)
 
 	.grid-align:nth-child({$gridSize}n+1)
 		clear both
@@ -31,18 +34,29 @@ body
 	font-family 'Open Sans', Arial, sans-serif
 	font-size 16px
 	color $fgColor
-	background url('assets/blur-bg.jpg') no-repeat
+	
+body, .blur-bg
+	background url('assets/crescent.jpg') no-repeat
 	background-size cover
 
-.page-container
+.blur-bg
+	position absolute
+	width 100vw
+	height 100vh
+	-webkit-filter blur(20px) brightness(30%)
+	-background-position -40px -40px
+
+.sudoku-container
 	box-sizing border-box
 	padding 20px
+	margin 20px
 	background-color $bgColor
 	border-radius 20px
 	position absolute
-	left 50%
+	overflow hidden
+	//left 50%
 	//top 50%
-	transform translateX(-50%) //translateY(-50%)
+	//transform translateX(-50%) //translateY(-50%)
 
 	.title
 		text-transform uppercase
@@ -53,8 +67,8 @@ body
 	#sudoku-grid
 		position relative
 		border 2px solid $borderColor
-		left 50%
-		transform translateX(-50%)
+		//left 50%
+		//transform translateX(-50%)
 		text-align center
 		box-sizing content-box
 

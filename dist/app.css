@@ -3,29 +3,35 @@ body {
   margin: 0;
   font-family: 'Open Sans', Arial, sans-serif;
   font-size: 16px;
-  color: rgba(0,0,0,0.8);
-  background: url("assets/blur-bg.jpg") no-repeat;
+  color: #fff;
+}
+body,
+.blur-bg {
+  background: url("assets/crescent.jpg") no-repeat;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
 }
-.page-container {
+.blur-bg {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  -webkit-filter: blur(20px) brightness(30%);
+  -background-position: -40px -40px;
+}
+.sudoku-container {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
   padding: 20px;
-  background-color: rgba(255,255,255,0.5);
+  margin: 20px;
+  background-color: rgba(0,0,0,0.5);
   -webkit-border-radius: 20px;
   border-radius: 20px;
   position: absolute;
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  transform: translateX(-50%);
+  overflow: hidden;
 }
-.page-container .title {
+.sudoku-container .title {
   text-transform: uppercase;
   text-align: center;
   opacity: 0.5;
@@ -33,96 +39,90 @@ body {
   filter: alpha(opacity=50);
   margin-bottom: 30px;
 }
-.page-container #sudoku-grid {
+.sudoku-container #sudoku-grid {
   position: relative;
-  border: 2px solid rgba(0,0,0,0.1);
-  left: 50%;
-  -webkit-transform: translateX(-50%);
-  -moz-transform: translateX(-50%);
-  -o-transform: translateX(-50%);
-  -ms-transform: translateX(-50%);
-  transform: translateX(-50%);
+  border: 2px solid rgba(255,255,255,0.2);
   text-align: center;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
 }
-.page-container #sudoku-grid:after {
+.sudoku-container #sudoku-grid:after {
   display: block;
   content: " ";
   clear: both;
 }
-.page-container #sudoku-grid .grid-align {
+.sudoku-container #sudoku-grid .grid-align {
   float: left;
 }
-.page-container #sudoku-grid .cell-container,
-.page-container #sudoku-grid .cell {
-  border: 1px solid rgba(0,0,0,0.1);
+.sudoku-container #sudoku-grid .cell-container,
+.sudoku-container #sudoku-grid .cell {
+  border: 1px solid rgba(255,255,255,0.2);
 }
-.page-container #sudoku-grid .cell {
+.sudoku-container #sudoku-grid .cell {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   padding: 3px;
 }
-.page-container #sudoku-grid .cell.input {
+.sudoku-container #sudoku-grid .cell.input {
   cursor: pointer;
 }
-.page-container #sudoku-grid .cell.input .cell-value,
-.page-container #sudoku-grid .cell.input .cell-hints {
+.sudoku-container #sudoku-grid .cell.input .cell-value,
+.sudoku-container #sudoku-grid .cell.input .cell-hints {
   color: #c80;
 }
-.page-container #sudoku-grid .cell.input .cell-hints {
+.sudoku-container #sudoku-grid .cell.input .cell-hints {
   display: block;
 }
-.page-container #sudoku-grid .cell.input .cell-value {
+.sudoku-container #sudoku-grid .cell.input .cell-value {
   display: none;
 }
-.page-container #sudoku-grid .cell .cell-hints {
+.sudoku-container #sudoku-grid .cell .cell-hints {
   display: none;
 }
-.page-container #sudoku-grid .cell .cell-hints .cell-hint {
+.sudoku-container #sudoku-grid .cell .cell-hints .cell-hint {
   font-size: 8px;
   height: 10px;
   width: 10px;
   line-height: 10px;
 }
-.page-container #sudoku-grid.grid2 {
+.sudoku-container #sudoku-grid.grid2 {
   width: 116px;
 }
-.page-container #sudoku-grid.grid2 .grid-align:nth-child(2n+1) {
+.sudoku-container #sudoku-grid.grid2 .grid-align:nth-child(2n+1) {
   clear: both;
 }
-.page-container #sudoku-grid.grid2 .cell {
+.sudoku-container #sudoku-grid.grid2 .cell {
   width: 20px;
   height: 20px;
 }
-.page-container #sudoku-grid.grid2 .cell-value {
+.sudoku-container #sudoku-grid.grid2 .cell-value {
   line-height: 20px;
 }
-.page-container #sudoku-grid.grid3 {
+.sudoku-container #sudoku-grid.grid3 {
   width: 348px;
 }
-.page-container #sudoku-grid.grid3 .grid-align:nth-child(3n+1) {
+.sudoku-container #sudoku-grid.grid3 .grid-align:nth-child(3n+1) {
   clear: both;
 }
-.page-container #sudoku-grid.grid3 .cell {
+.sudoku-container #sudoku-grid.grid3 .cell {
   width: 30px;
   height: 30px;
 }
-.page-container #sudoku-grid.grid3 .cell-value {
+.sudoku-container #sudoku-grid.grid3 .cell-value {
   line-height: 30px;
 }
-.page-container #sudoku-grid.grid4 {
+.sudoku-container #sudoku-grid.grid4 {
   width: 776px;
 }
-.page-container #sudoku-grid.grid4 .grid-align:nth-child(4n+1) {
+.sudoku-container #sudoku-grid.grid4 .grid-align:nth-child(4n+1) {
   clear: both;
 }
-.page-container #sudoku-grid.grid4 .cell {
+.sudoku-container #sudoku-grid.grid4 .cell {
   width: 40px;
   height: 40px;
 }
-.page-container #sudoku-grid.grid4 .cell-value {
+.sudoku-container #sudoku-grid.grid4 .cell-value {
   line-height: 40px;
 }
