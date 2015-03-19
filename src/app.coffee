@@ -12,7 +12,12 @@ $ ->
 	#add View Port tag
 	#containerWidth  = $(".sudoku-container").width()
 	#$('head').append("<meta name='viewport' content=width='" + containerWidth + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>")
-
+	
+	# If size url param is present then we change the grid size accordingly
+	updateUrlConstants = ->
+		queryMatch = location.search.match(/size=(\d)/)
+		if queryMatch and (queryMatch[1] == "2" or queryMatch[1] == "4")
+			constants.gridSize = parseInt(queryMatch[1])
 	
 	sudokuVue = new Vue
 		el: "#sudoku-container"
@@ -26,6 +31,9 @@ $ ->
 			newGame: ->
 				@sudoku = new SudokuGrid(constants.gridSize)
 				requestAnimationFrame(@animateShuffle)
+
+			onCellClick: (numContainer, numCell) ->
+				c.log numContainer, numCell
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
@@ -49,8 +57,8 @@ $ ->
 				requestAnimationFrame(renderFrame)
 
 
+	updateUrlConstants()
 	sudokuVue.newGame()
-
 
 
 

@@ -21,15 +21,20 @@ html
 		script(src='app.js')
 
 	body
-		#sudoku-container
+		#sudoku-container.center-align
 			.bg
 			h1.title Uber Sudoku
-			#sudoku-grid(v-attr="class: 'grid' + sudoku.gridSize")
+			#sudoku-grid(v-attr="class: 'center-align grid' + sudoku.gridSize")
 				.cell-container.grid-align(v-repeat="numContainer: loop(sudoku.gridSize)")
-					.cell.grid-align(v-repeat="numCell: loop(sudoku.gridSize)" v-class="editable: sudoku.isEditable(numContainer, numCell)")
+					.cell.grid-align(
+						v-repeat="numCell: loop(sudoku.gridSize)" 
+						v-class="editable: sudoku.isEditable(numContainer, numCell)"
+						v-on="click: onCellClick(numContainer, numCell)"
+						)
 						.cell-value(v-text="sudoku.charAt(numContainer, numCell)")
 						.cell-hints(v-class="show-hints: showHints")
 							.cell-hint.grid-align(v-repeat="numHint: loop(sudoku.gridSize)" v-text="numHint")
+
 			.btn-bar
 				.btn.left(v-on="click: newGame()") New Game
 				.btn.right(v-class="selected: showHints" v-on="click: showHints = !showHints") Show Hints

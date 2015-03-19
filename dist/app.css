@@ -11,15 +11,20 @@ body {
   -moz-background-size: cover;
   background-size: cover;
 }
+.center-align {
+  position: relative;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  -moz-transform: translateX(-50%);
+  -o-transform: translateX(-50%);
+  -ms-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
 #sudoku-container {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  padding: 20px;
-  margin: 20px;
   margin-top: 30px;
-  -webkit-border-radius: 20px;
-  border-radius: 20px;
   overflow: hidden;
   display: inline-block;
 }
