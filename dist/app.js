@@ -5,19 +5,33 @@ c = console;
 sudokuVue = null;
 
 constants = {
+  gridSize: 3,
   numSwaps: 10,
   numAnimFrames: 30
 };
 
 $(function() {
-  var gridSize, parseUrlVars;
-  gridSize = 3;
+  var autoScaleGrid, parseUrlVars;
   parseUrlVars = function() {
     var queryMatch;
     queryMatch = location.search.match(/size=(\d)/);
     if (queryMatch && (queryMatch[1] === "2" || queryMatch[1] === "4")) {
-      return gridSize = parseInt(queryMatch[1]);
+      return constants.gridSize = parseInt(queryMatch[1]);
     }
+  };
+  autoScaleGrid = function() {
+    var $container, $window, ch, cw, scale, wh, ww;
+    $container = $("#sudoku-container");
+    $window = $(window);
+    cw = $container.outerWidth();
+    ch = $container.outerHeight();
+    ww = $window.width();
+    wh = $window.height();
+    scale = Math.min(ww / cw, wh / ch);
+    return $container.css({
+      transform: "scale(" + scale + ")",
+      top: (wh - ch * scale) / 2
+    });
   };
   sudokuVue = new Vue({
     el: "#sudoku-container",
@@ -31,7 +45,7 @@ $(function() {
         return _.range(0, size * size);
       },
       newGame: function() {
-        this.sudoku = new SudokuGrid(gridSize);
+        this.sudoku = new SudokuGrid(constants.gridSize);
         return requestAnimationFrame(this.animateShuffle);
       },
       onCellClick: function(numContainer, numCell) {
@@ -67,7 +81,9 @@ $(function() {
     }
   });
   parseUrlVars();
-  return sudokuVue.newGame();
+  sudokuVue.newGame();
+  $(window).on('resize', autoScaleGrid);
+  return requestAnimationFrame(autoScaleGrid);
 });
 
 
@@ -108,6 +124,14 @@ SudokuGrid = (function() {
           results = [];
           for (i = k = ref = charA, ref1 = charA + 4; k < ref1; i = k += 1) {
             results.push(String.fromCharCode(i));
+          }
+          return results;
+        })();
+        this.gridChars = (function() {
+          var k, results;
+          results = [];
+          for (i = k = 1; k < 5; i = k += 1) {
+            results.push(i.toString());
           }
           return results;
         })();

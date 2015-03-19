@@ -2,23 +2,28 @@ c = console
 sudokuVue = null
 
 constants =
+	gridSize: 3
 	numSwaps: 10
 	numAnimFrames: 30
 
 
 $ ->
-
-	#add View Port tag
-	#containerWidth  = $(".sudoku-container").width()
-	#$('head').append("<meta name='viewport' content=width='" + containerWidth + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>")
-	
 	# If size url param is present then we change the grid size accordingly
-	gridSize = 3
-
 	parseUrlVars = ->
 		queryMatch = location.search.match(/size=(\d)/)
 		if queryMatch and (queryMatch[1] == "2" or queryMatch[1] == "4")
-			gridSize = parseInt(queryMatch[1])
+			constants.gridSize = parseInt(queryMatch[1])
+
+	autoScaleGrid = ->
+		$container = $("#sudoku-container")
+		$window = $(window)
+		cw = $container.outerWidth()
+		ch = $container.outerHeight()
+		ww = $window.width()
+		wh = $window.height()
+		scale = Math.min(ww/cw, wh/ch)
+		$container.css(transform: "scale(" + scale + ")", top: (wh - ch * scale)/2)
+
 	
 	sudokuVue = new Vue
 		el: "#sudoku-container"
@@ -30,7 +35,7 @@ $ ->
 		methods:
 			loop: (size) -> _.range(0, size * size)
 			newGame: ->
-				@sudoku = new SudokuGrid(gridSize)
+				@sudoku = new SudokuGrid(constants.gridSize)
 				requestAnimationFrame(@animateShuffle)
 
 			onCellClick: (numContainer, numCell) ->
@@ -61,6 +66,9 @@ $ ->
 	parseUrlVars()
 	sudokuVue.newGame()
 
+	$(window).on('resize', autoScaleGrid)
+	requestAnimationFrame(autoScaleGrid)
+
 
 
 ###
@@ -90,6 +98,7 @@ class SudokuGrid
 		switch gridSize
 			when 2
 				@gridChars = (String.fromCharCode(i) for i in [charA ... charA + 4] by 1)
+				@gridChars = (i.toString() for i in [1 ... 5] by 1)
 			when 3
 				@gridChars = (i.toString() for i in [1 ... 10] by 1)
 			when 4
@@ -222,7 +231,7 @@ class SudokuGrid
 	hintAt: (numContainer, numCell, numHint) ->
 		coords = @rowColFromCell(numContainer, numCell)
 		return @gridChars[numHint]
-		
+
 	isEditable: (numContainer, numCell) ->
 		coords = @rowColFromCell(numContainer, numCell)
 		return @inputMask[coords.row][coords.col] == 1

@@ -24,9 +24,15 @@ body {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  margin: 30px;
+  padding: 30px;
   overflow: hidden;
   display: inline-block;
+  position: absolute;
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  -o-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+  transform-origin: 0 0;
 }
 #sudoku-container .title {
   text-transform: uppercase;
@@ -35,6 +41,7 @@ body {
   -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
   filter: alpha(opacity=50);
   margin-bottom: 30px;
+  margin-top: 0px;
   letter-spacing: 8px;
 }
 #sudoku-container #sudoku-grid {
