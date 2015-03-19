@@ -4,7 +4,7 @@ sudokuVue = null
 constants =
 	gridSize: 3
 	numSwaps: 10
-	numAnimFrames: 50
+	numAnimFrames: 30
 
 
 $ ->
@@ -27,23 +27,24 @@ $ ->
 				@sudoku = new SudokuGrid(constants.gridSize)
 				requestAnimationFrame(@animateShuffle)
 
-			# Do a fake animation when newGame is generated
+			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
-				cellValues = $(".cell:not(.editable) > .cell-value")
+				$cellValues = $(".cell:not(.editable) > .cell-value")
+				innerTexts = $.map($cellValues, (elem) -> elem.innerText)
+
 				chars = @sudoku.gridChars
 				frameCounter = 0
 
 				renderFrame = ->
 					++frameCounter
 
-					cellValues.each (i, elem) -> elem.innerText = _.sample(chars)
+					$cellValues.each (i, elem) -> elem.innerText = _.sample(chars)
 					if frameCounter < constants.numAnimFrames
 						requestAnimationFrame(renderFrame)
 					else
-						# Re-bind vue on finish animation
-						sudoku = sudokuVue.sudoku
-						sudokuVue.sudoku = null
-						sudokuVue.sudoku = sudoku
+						# On last frame add original innerText
+						for elem, i in $cellValues
+							elem.innerText = innerTexts[i]
 
 				requestAnimationFrame(renderFrame)
 

@@ -7,7 +7,7 @@ sudokuVue = null;
 constants = {
   gridSize: 3,
   numSwaps: 10,
-  numAnimFrames: 50
+  numAnimFrames: 30
 };
 
 $(function() {
@@ -27,22 +27,28 @@ $(function() {
         return requestAnimationFrame(this.animateShuffle);
       },
       animateShuffle: function() {
-        var cellValues, chars, frameCounter, renderFrame;
-        cellValues = $(".cell:not(.editable) > .cell-value");
+        var $cellValues, chars, frameCounter, innerTexts, renderFrame;
+        $cellValues = $(".cell:not(.editable) > .cell-value");
+        innerTexts = $.map($cellValues, function(elem) {
+          return elem.innerText;
+        });
         chars = this.sudoku.gridChars;
         frameCounter = 0;
         renderFrame = function() {
-          var sudoku;
+          var elem, i, k, len1, results;
           ++frameCounter;
-          cellValues.each(function(i, elem) {
+          $cellValues.each(function(i, elem) {
             return elem.innerText = _.sample(chars);
           });
           if (frameCounter < constants.numAnimFrames) {
             return requestAnimationFrame(renderFrame);
           } else {
-            sudoku = sudokuVue.sudoku;
-            sudokuVue.sudoku = null;
-            return sudokuVue.sudoku = sudoku;
+            results = [];
+            for (i = k = 0, len1 = $cellValues.length; k < len1; i = ++k) {
+              elem = $cellValues[i];
+              results.push(elem.innerText = innerTexts[i]);
+            }
+            return results;
           }
         };
         return requestAnimationFrame(renderFrame);

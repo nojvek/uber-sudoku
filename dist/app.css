@@ -5,20 +5,11 @@ body {
   font-size: 16px;
   color: #fff;
 }
-body,
-.blur-bg {
-  background: url("assets/crescent.jpg") no-repeat;
+body {
+  background: url("assets/drop.jpg") no-repeat;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   background-size: cover;
-}
-.blur-bg {
-  position: absolute;
-  width: 120%;
-  height: 120%;
-  top: -20px;
-  left: -20px;
-  -webkit-filter: blur(20px) brightness(40%);
 }
 #sudoku-container {
   -webkit-box-sizing: border-box;
