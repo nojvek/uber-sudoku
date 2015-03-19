@@ -296,6 +296,12 @@ SudokuGrid = (function() {
     }
   };
 
+  SudokuGrid.prototype.hintAt = function(numContainer, numCell, numHint) {
+    var coords;
+    coords = this.rowColFromCell(numContainer, numCell);
+    return this.gridChars[numHint];
+  };
+
   SudokuGrid.prototype.isEditable = function(numContainer, numCell) {
     var coords;
     coords = this.rowColFromCell(numContainer, numCell);
