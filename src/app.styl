@@ -80,6 +80,7 @@ body
 			background $bgColor
 			padding 3px
 			position relative
+			transition background-color 0.2s
 						
 			.cell-value
 				position absolute
@@ -102,6 +103,11 @@ body
 				
 				.cell-hints.show-hints
 					display block
+					
+				&:hover
+					border 1px solid alpha($inputColor, 0.7)
+					background-color alpha($inputColor, 0.3)
+
 				
 		
 		// Dynamically generate classes for different grid sizes			
