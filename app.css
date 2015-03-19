@@ -103,14 +103,64 @@ body {
   border: 1px solid rgba(255,255,0,0.7);
   background-color: rgba(255,255,0,0.3);
 }
+#sudoku-container #sudoku-grid .input-grid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 2px solid rgba(255,255,0,0.7);
+  background-color: #000;
+  color: rgba(255,255,0,0.7);
+  cursor: pointer;
+  -webkit-transition: -webkit-transform 0.2s;
+  -moz-transition: -moz-transform 0.2s;
+  -o-transition: -o-transform 0.2s;
+  -ms-transition: -ms-transform 0.2s;
+  transition: transform 0.2s;
+  -webkit-transform-origin: center center;
+  -moz-transform-origin: center center;
+  -o-transform-origin: center center;
+  -ms-transform-origin: center center;
+  transform-origin: center center;
+  -webkit-transform: scale(0);
+  -moz-transform: scale(0);
+  -o-transform: scale(0);
+  -ms-transform: scale(0);
+  transform: scale(0);
+}
+#sudoku-container #sudoku-grid .input-grid.show {
+  -webkit-transform: scale(1);
+  -moz-transform: scale(1);
+  -o-transform: scale(1);
+  -ms-transform: scale(1);
+  transform: scale(1);
+}
+#sudoku-container #sudoku-grid .input-grid .input {
+  padding: 3px;
+  border: 1px solid rgba(255,255,0,0.7);
+  -webkit-transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  -o-transition: background-color 0.2s;
+  -ms-transition: background-color 0.2s;
+  transition: background-color 0.2s;
+}
+#sudoku-container #sudoku-grid .input-grid .input:hover {
+  background-color: #7f8000;
+}
+#sudoku-container #sudoku-grid .input-grid:after {
+  display: block;
+  content: " ";
+  clear: both;
+}
 #sudoku-container #sudoku-grid.grid2 {
   width: 116px;
+  height: 116px;
 }
 #sudoku-container #sudoku-grid.grid2 .grid-align:nth-child(2n+1) {
   clear: both;
 }
 #sudoku-container #sudoku-grid.grid2 .cell,
-#sudoku-container #sudoku-grid.grid2 .cell-value {
+#sudoku-container #sudoku-grid.grid2 .cell-value,
+#sudoku-container #sudoku-grid.grid2 .input {
   width: 20px;
   height: 20px;
   font-size: 16px;
@@ -120,12 +170,14 @@ body {
 }
 #sudoku-container #sudoku-grid.grid3 {
   width: 348px;
+  height: 348px;
 }
 #sudoku-container #sudoku-grid.grid3 .grid-align:nth-child(3n+1) {
   clear: both;
 }
 #sudoku-container #sudoku-grid.grid3 .cell,
-#sudoku-container #sudoku-grid.grid3 .cell-value {
+#sudoku-container #sudoku-grid.grid3 .cell-value,
+#sudoku-container #sudoku-grid.grid3 .input {
   width: 30px;
   height: 30px;
   font-size: 24px;
@@ -135,12 +187,14 @@ body {
 }
 #sudoku-container #sudoku-grid.grid4 {
   width: 776px;
+  height: 776px;
 }
 #sudoku-container #sudoku-grid.grid4 .grid-align:nth-child(4n+1) {
   clear: both;
 }
 #sudoku-container #sudoku-grid.grid4 .cell,
-#sudoku-container #sudoku-grid.grid4 .cell-value {
+#sudoku-container #sudoku-grid.grid4 .cell-value,
+#sudoku-container #sudoku-grid.grid4 .input {
   width: 40px;
   height: 40px;
   font-size: 32px;
