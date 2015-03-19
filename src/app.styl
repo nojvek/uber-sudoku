@@ -13,20 +13,20 @@ genGrid($gridSize)
 	$cellSize = (10px * $gridSize)
 	$width = ((($cellSize + 8) * $gridSize + 2)* $gridSize)
 
-	width ($width)
-	//transform scale($scale)
+	width $width
+	height $width
 
 	.grid-align:nth-child({$gridSize}n+1)
 		clear both
 	
-	.cell, .cell-value			
+	.cell, .cell-value, .input	
 		width $cellSize
 		height $cellSize
 		font-size ($cellSize - $gridSize*2)
 	
 	.cell-value
 		line-height $cellSize
-		
+				
 	
 // Style
 body
@@ -111,6 +111,35 @@ body
 					border 1px solid alpha($inputColor, 0.7)
 					background-color alpha($inputColor, 0.3)
 
+		.input-grid
+			position absolute
+			top 0
+			left 0
+			border 2px solid $inputColor
+			background-color #000
+			color $inputColor
+			cursor pointer
+			transition transform 0.2s
+			transform-origin center center
+			transform scale(0)
+			
+			&.show
+				transform scale(1)
+			
+			.input
+				padding 3px
+				border 1px solid $inputColor
+				transition background-color 0.2s
+				
+				&:hover
+					background-color darken(alpha($inputColor, 1), 50%)
+
+				
+			&:after
+				display block
+				content " "
+				clear both
+			
 				
 		
 		// Dynamically generate classes for different grid sizes			
