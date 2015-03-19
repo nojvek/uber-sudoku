@@ -63,6 +63,11 @@ body {
   background: rgba(255,255,255,0.1);
   padding: 3px;
   position: relative;
+  -webkit-transition: background-color 0.2s;
+  -moz-transition: background-color 0.2s;
+  -o-transition: background-color 0.2s;
+  -ms-transition: background-color 0.2s;
+  transition: background-color 0.2s;
 }
 #sudoku-container #sudoku-grid .cell .cell-value {
   position: absolute;
@@ -86,6 +91,10 @@ body {
 }
 #sudoku-container #sudoku-grid .cell.editable .cell-hints.show-hints {
   display: block;
+}
+#sudoku-container #sudoku-grid .cell.editable:hover {
+  border: 1px solid rgba(255,255,0,0.7);
+  background-color: rgba(255,255,0,0.3);
 }
 #sudoku-container #sudoku-grid.grid2 {
   width: 116px;
