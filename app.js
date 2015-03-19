@@ -5,18 +5,18 @@ c = console;
 sudokuVue = null;
 
 constants = {
-  gridSize: 3,
   numSwaps: 10,
   numAnimFrames: 30
 };
 
 $(function() {
-  var updateUrlConstants;
-  updateUrlConstants = function() {
+  var gridSize, parseUrlVars;
+  gridSize = 3;
+  parseUrlVars = function() {
     var queryMatch;
     queryMatch = location.search.match(/size=(\d)/);
     if (queryMatch && (queryMatch[1] === "2" || queryMatch[1] === "4")) {
-      return constants.gridSize = parseInt(queryMatch[1]);
+      return gridSize = parseInt(queryMatch[1]);
     }
   };
   sudokuVue = new Vue({
@@ -31,7 +31,7 @@ $(function() {
         return _.range(0, size * size);
       },
       newGame: function() {
-        this.sudoku = new SudokuGrid(constants.gridSize);
+        this.sudoku = new SudokuGrid(gridSize);
         return requestAnimationFrame(this.animateShuffle);
       },
       onCellClick: function(numContainer, numCell) {
@@ -66,7 +66,7 @@ $(function() {
       }
     }
   });
-  updateUrlConstants();
+  parseUrlVars();
   return sudokuVue.newGame();
 });
 

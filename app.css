@@ -24,7 +24,7 @@ body {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  margin-top: 30px;
+  margin: 30px;
   overflow: hidden;
   display: inline-block;
 }
@@ -97,6 +97,7 @@ body {
 #sudoku-container #sudoku-grid.grid2 .cell-value {
   width: 20px;
   height: 20px;
+  font-size: 16px;
 }
 #sudoku-container #sudoku-grid.grid2 .cell-value {
   line-height: 20px;
@@ -111,6 +112,7 @@ body {
 #sudoku-container #sudoku-grid.grid3 .cell-value {
   width: 30px;
   height: 30px;
+  font-size: 24px;
 }
 #sudoku-container #sudoku-grid.grid3 .cell-value {
   line-height: 30px;
@@ -125,6 +127,7 @@ body {
 #sudoku-container #sudoku-grid.grid4 .cell-value {
   width: 40px;
   height: 40px;
+  font-size: 32px;
 }
 #sudoku-container #sudoku-grid.grid4 .cell-value {
   line-height: 40px;
