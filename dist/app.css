@@ -87,7 +87,7 @@ body {
 }
 #sudoku-container #sudoku-grid .cell.editable .cell-value,
 #sudoku-container #sudoku-grid .cell.editable .cell-hints {
-  color: #ff0;
+  color: rgba(255,255,0,0.7);
 }
 #sudoku-container #sudoku-grid .cell.editable .cell-hints.show-hints {
   display: block;
@@ -156,7 +156,7 @@ body {
   border: 1px solid rgba(255,255,255,0.3);
   -webkit-border-radius: 5px;
   border-radius: 5px;
-  color: #ff0;
+  color: rgba(255,255,0,0.7);
   background-color: rgba(255,255,255,0.1);
   cursor: pointer;
   -webkit-transition: background-color 0.2s;
