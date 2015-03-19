@@ -1,49 +1,55 @@
-var SudokuGrid, c, constants, sudokuGridView;
+var SudokuGrid, c, constants, sudokuVue;
 
 c = console;
 
+sudokuVue = null;
+
 constants = {
   gridSize: 3,
-  numSwaps: 10
+  numSwaps: 10,
+  numAnimFrames: 50
 };
 
-sudokuGridView = null;
-
 $(function() {
-  var cells, counter, maxAnimationFrames, nums, randomizeNumbers, sudokuGrid;
-  cells = $(".cell-value");
-  nums = _.range(1, 10);
-  counter = 0;
-  maxAnimationFrames = 50;
-  randomizeNumbers = function() {
-    ++counter;
-    cells.each(function(i, elem) {
-      return elem.innerText = _.sample(nums);
-    });
-    if (counter < maxAnimationFrames) {
-      return requestAnimationFrame(randomizeNumbers);
-    }
-  };
-  sudokuGrid = new SudokuGrid(constants.gridSize);
-  sudokuGrid.randomize();
-  return sudokuGridView = new Vue({
-    el: "#sudoku-grid",
-    data: sudokuGrid,
+  sudokuVue = new Vue({
+    el: "#sudoku-container",
+    data: {
+      showHints: false,
+      inputMask: [],
+      sudoku: null
+    },
     methods: {
       loop: function(size) {
         return _.range(0, size * size);
       },
-      getCellValue: function(grid, numContainer, numCell) {
-        var cellX, cellY, containerX, containerY, size;
-        size = Math.sqrt(grid.length);
-        containerX = numContainer % size;
-        containerY = Math.floor(numContainer / size);
-        cellX = containerX * size + numCell % size;
-        cellY = containerY * size + Math.floor(numCell / size);
-        return grid[cellY][cellX];
+      newGame: function() {
+        this.sudoku = new SudokuGrid(constants.gridSize);
+        return requestAnimationFrame(this.animateShuffle);
+      },
+      animateShuffle: function() {
+        var cellValues, chars, frameCounter, renderFrame;
+        cellValues = $(".cell:not(.editable) > .cell-value");
+        chars = this.sudoku.gridChars;
+        frameCounter = 0;
+        renderFrame = function() {
+          var sudoku;
+          ++frameCounter;
+          cellValues.each(function(i, elem) {
+            return elem.innerText = _.sample(chars);
+          });
+          if (frameCounter < constants.numAnimFrames) {
+            return requestAnimationFrame(renderFrame);
+          } else {
+            sudoku = sudokuVue.sudoku;
+            sudokuVue.sudoku = null;
+            return sudokuVue.sudoku = sudoku;
+          }
+        };
+        return requestAnimationFrame(renderFrame);
       }
     }
   });
+  return sudokuVue.newGame();
 });
 
 
@@ -117,7 +123,11 @@ SudokuGrid = (function() {
         })());
     }
     this.gridSize = gridSize;
+    this.gridLen = gridSize * gridSize;
     this.grid = this.identity();
+    this.shuffleGrid();
+    this.inputMask = this.randomInputMask();
+    this.applyInputMask();
   }
 
 
@@ -140,12 +150,12 @@ SudokuGrid = (function() {
     var i, index, j, k, l, len, ref, ref1, row, size;
     this.grid = [];
     size = this.gridSize;
-    len = size * size;
+    len = this.gridLen;
     for (i = k = 0, ref = len; k < ref; i = k += 1) {
       row = [];
       for (j = l = 0, ref1 = len; l < ref1; j = l += 1) {
         index = (i * size + j + Math.floor(i / size)) % len;
-        row.push(this.gridChars[index]);
+        row.push(index);
       }
       this.grid.push(row);
     }
@@ -157,11 +167,11 @@ SudokuGrid = (function() {
   	Randomize by swapping rows and columns between a cell-container
    */
 
-  SudokuGrid.prototype.randomize = function() {
+  SudokuGrid.prototype.shuffleGrid = function() {
     var grid, i, k, l, len, num1, num2, numCell, offset, ref, ref1, size, swap;
+    grid = this.grid;
     size = this.gridSize;
     len = size * size;
-    grid = this.grid;
     swap = function(num1, num2, rowMul, colMul) {
       var col1, col2, colAdd, i, k, ref, results, row1, row2, rowAdd, temp;
       row1 = row2 = col1 = col2 = 0;
@@ -172,7 +182,6 @@ SudokuGrid = (function() {
         col1 = num1;
         col2 = num2;
       }
-      c.log(row1, row2, col1, col2, rowMul, colMul);
       results = [];
       for (i = k = 0, ref = len; k < ref; i = k += 1) {
         rowAdd = i * rowMul;
@@ -198,6 +207,81 @@ SudokuGrid = (function() {
       }
     }
     return this.grid;
+  };
+
+
+  /*
+  	Generates a size x size input mask with the same dimensions as the grid
+  	0 means value cannot be edited by the user
+  	1 means the value can be edited by the user
+   */
+
+  SudokuGrid.prototype.randomInputMask = function() {
+    var i, j, k, l, len, ref, ref1, row, val;
+    this.inputMask = [];
+    len = this.gridLen;
+    for (i = k = 0, ref = len; k < ref; i = k += 1) {
+      row = [];
+      for (j = l = 0, ref1 = len; l < ref1; j = l += 1) {
+        if (Math.random() > 0.5) {
+          val = 0;
+        } else {
+          val = 1;
+        }
+        row.push(val);
+      }
+      this.inputMask.push(row);
+    }
+    return this.inputMask;
+  };
+
+
+  /*
+  	Set values in grid to null if input mask cell is set to 1
+  	We randomly set cells to be editable
+   */
+
+  SudokuGrid.prototype.applyInputMask = function() {
+    var i, j, k, l, len, ref, ref1;
+    len = this.gridLen;
+    for (i = k = 0, ref = len; k < ref; i = k += 1) {
+      for (j = l = 0, ref1 = len; l < ref1; j = l += 1) {
+        if (this.inputMask[i][j] === 1) {
+          this.grid[i][j] = null;
+        }
+      }
+    }
+    return this.inputMask;
+  };
+
+  SudokuGrid.prototype.rowColFromCell = function(numContainer, numCell) {
+    var col, row, size;
+    size = this.gridSize;
+    col = numContainer % size;
+    row = Math.floor(numContainer / size);
+    col = col * size + numCell % size;
+    row = row * size + Math.floor(numCell / size);
+    return {
+      row: row,
+      col: col
+    };
+  };
+
+  SudokuGrid.prototype.charAt = function(numContainer, numCell) {
+    var coords, val;
+    coords = this.rowColFromCell(numContainer, numCell);
+    val = this.grid[coords.row][coords.col];
+    if (val !== null) {
+      return this.gridChars[val];
+    } else {
+      return "";
+    }
+  };
+
+  SudokuGrid.prototype.isEditable = function(numContainer, numCell) {
+    var coords;
+    coords = this.rowColFromCell(numContainer, numCell);
+    return this.inputMask[coords.row][coords.col] === 1;
   };
 
   return SudokuGrid;
