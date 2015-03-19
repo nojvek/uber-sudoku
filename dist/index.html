@@ -27,7 +27,7 @@
           <div v-repeat="numCell: loop(sudoku.gridSize)" v-class="editable: sudoku.isEditable(numContainer, numCell)" v-on="click: onCellClick(numContainer, numCell)" class="cell grid-align">
             <div v-text="sudoku.charAt(numContainer, numCell)" class="cell-value"></div>
             <div v-class="show-hints: showHints" class="cell-hints">
-              <div v-repeat="numHint: loop(sudoku.gridSize)" v-text="numHint" class="cell-hint grid-align"></div>
+              <div v-repeat="numHint: loop(sudoku.gridSize)" v-text="sudoku.hintAt(numContainer, numCell, numHint)" class="cell-hint grid-align"></div>
             </div>
           </div>
         </div>

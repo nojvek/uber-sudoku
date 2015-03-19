@@ -219,6 +219,10 @@ class SudokuGrid
 		val = @grid[coords.row][coords.col]
 		return if val != null then @gridChars[val] else ""
 
+	hintAt: (numContainer, numCell, numHint) ->
+		coords = @rowColFromCell(numContainer, numCell)
+		return @gridChars[numHint]
+		
 	isEditable: (numContainer, numCell) ->
 		coords = @rowColFromCell(numContainer, numCell)
 		return @inputMask[coords.row][coords.col] == 1
