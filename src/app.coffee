@@ -2,7 +2,6 @@ c = console
 sudokuVue = null
 
 constants =
-	gridSize: 3
 	numSwaps: 10
 	numAnimFrames: 30
 
@@ -14,10 +13,12 @@ $ ->
 	#$('head').append("<meta name='viewport' content=width='" + containerWidth + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>")
 	
 	# If size url param is present then we change the grid size accordingly
-	updateUrlConstants = ->
+	gridSize = 3
+
+	parseUrlVars = ->
 		queryMatch = location.search.match(/size=(\d)/)
 		if queryMatch and (queryMatch[1] == "2" or queryMatch[1] == "4")
-			constants.gridSize = parseInt(queryMatch[1])
+			gridSize = parseInt(queryMatch[1])
 	
 	sudokuVue = new Vue
 		el: "#sudoku-container"
@@ -29,7 +30,7 @@ $ ->
 		methods:
 			loop: (size) -> _.range(0, size * size)
 			newGame: ->
-				@sudoku = new SudokuGrid(constants.gridSize)
+				@sudoku = new SudokuGrid(gridSize)
 				requestAnimationFrame(@animateShuffle)
 
 			onCellClick: (numContainer, numCell) ->
@@ -57,7 +58,7 @@ $ ->
 				requestAnimationFrame(renderFrame)
 
 
-	updateUrlConstants()
+	parseUrlVars()
 	sudokuVue.newGame()
 
 

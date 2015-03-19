@@ -22,6 +22,7 @@ genGrid($gridSize)
 	.cell, .cell-value			
 		width $cellSize
 		height $cellSize
+		font-size ($cellSize - $gridSize*2)
 	
 	.cell-value
 		line-height $cellSize
@@ -46,7 +47,7 @@ body
 
 #sudoku-container
 	box-sizing border-box
-	margin-top 30px
+	margin 30px
 	overflow hidden
 	display inline-block
 
