@@ -1,10 +1,11 @@
 c = console
+sudokuVue = null
 
 constants =
 	gridSize: 3
 	numSwaps: 10
+	numAnimFrames: 50
 
-sudokuGridView = null
 
 $ ->
 
@@ -12,38 +13,44 @@ $ ->
 	#containerWidth  = $(".sudoku-container").width()
 	#$('head').append("<meta name='viewport' content=width='" + containerWidth + ", initial-scale=1.0, maximum-scale=1.0, user-scalable=0'>")
 
+	
+	sudokuVue = new Vue
+		el: "#sudoku-container"
+		data:
+			showHints: false
+			inputMask: []
+			sudoku: null
 
-
-	cells = $(".cell-value")
-	nums = _.range(1, 10)
-	counter = 0
-	maxAnimationFrames = 50
-
-	randomizeNumbers = ->
-		++counter
-		cells.each (i,elem) ->
-			elem.innerText = _.sample(nums)
-		requestAnimationFrame(randomizeNumbers) if counter < maxAnimationFrames
-
-	#randomizeNumbers()
-
-	sudokuGrid = new SudokuGrid(constants.gridSize)
-	sudokuGrid.randomize()
-	#$("#sudoku-grid").addClass("grid" + constants.gridSize)
-
-	sudokuGridView = new Vue
-		el: "#sudoku-grid"
-		data: sudokuGrid
 		methods:
 			loop: (size) -> _.range(0, size * size)
+			newGame: ->
+				@sudoku = new SudokuGrid(constants.gridSize)
+				requestAnimationFrame(@animateShuffle)
 
-			getCellValue: (grid, numContainer, numCell) ->
-				size = Math.sqrt(grid.length)
-				containerX = numContainer % size
-				containerY = Math.floor(numContainer / size)
-				cellX = containerX * size + numCell % size
-				cellY = containerY * size  + Math.floor(numCell / size)
-				return grid[cellY][cellX]
+			# Do a fake animation when newGame is generated
+			animateShuffle: ->
+				cellValues = $(".cell:not(.editable) > .cell-value")
+				chars = @sudoku.gridChars
+				frameCounter = 0
+
+				renderFrame = ->
+					++frameCounter
+
+					cellValues.each (i, elem) -> elem.innerText = _.sample(chars)
+					if frameCounter < constants.numAnimFrames
+						requestAnimationFrame(renderFrame)
+					else
+						# Re-bind vue on finish animation
+						sudoku = sudokuVue.sudoku
+						sudokuVue.sudoku = null
+						sudokuVue.sudoku = sudoku
+
+				requestAnimationFrame(renderFrame)
+
+
+	sudokuVue.newGame()
+
+
 
 
 ###
@@ -80,7 +87,11 @@ class SudokuGrid
 				@gridChars = @gridChars.concat (String.fromCharCode(i) for i in [charA ... charA + 6] by 1)
 		
 		@gridSize = gridSize
+		@gridLen = gridSize * gridSize
 		@grid = @identity()
+		@shuffleGrid()
+		@inputMask = @randomInputMask()
+		@applyInputMask()
 
 
 	###
@@ -100,13 +111,13 @@ class SudokuGrid
 	identity: ->
 		@grid = []
 		size = @gridSize
-		len = size * size
+		len = @gridLen
 
 		for i in [0...len] by 1
 			row = []
 			for j in [0...len] by 1
 				index = ((i * size + j + Math.floor(i / size)) % len)
-				row.push(@gridChars[index])
+				row.push(index)
 			@grid.push(row)
 		
 		return @grid
@@ -114,10 +125,10 @@ class SudokuGrid
 	###
 	Randomize by swapping rows and columns between a cell-container
 	###
-	randomize: ->
+	shuffleGrid: ->
+		grid = @grid
 		size = @gridSize
 		len = size * size
-		grid = @grid
 
 		swap = (num1, num2, rowMul, colMul) ->
 			row1 = row2 = col1 = col2 = 0
@@ -128,7 +139,7 @@ class SudokuGrid
 				col1 = num1
 				col2 = num2
 
-			c.log row1, row2, col1, col2, rowMul, colMul
+			#c.log row1, row2, col1, col2, rowMul, colMul
 
 			for i in [0...len] by 1
 				rowAdd = i * rowMul
@@ -154,4 +165,51 @@ class SudokuGrid
 
 		#swap cols
 		return @grid
+
+	###
+	Generates a size x size input mask with the same dimensions as the grid
+	0 means value cannot be edited by the user
+	1 means the value can be edited by the user
+	###
+	randomInputMask: ->
+		@inputMask = []
+		len = @gridLen
+
+		for i in [0...len] by 1
+			row = []
+			for j in [0...len] by 1
+				if Math.random() > 0.5 then val = 0 else val = 1
+				row.push(val)
+			@inputMask.push(row)
+		
+		return @inputMask
+
+	###
+	Set values in grid to null if input mask cell is set to 1
+	We randomly set cells to be editable
+	###
+	applyInputMask:  ->
+		len = @gridLen
+		for i in [0...len] by 1
+			for j in [0...len] by 1
+				if @inputMask[i][j] == 1
+					@grid[i][j] = null
+		return @inputMask
+
+	rowColFromCell: (numContainer, numCell) ->
+		size = @gridSize
+		col = numContainer % size
+		row = Math.floor(numContainer / size)
+		col = col * size + numCell % size
+		row = row * size + Math.floor(numCell / size)
+		return row:row, col:col
+
+	charAt: (numContainer, numCell) ->
+		coords = @rowColFromCell(numContainer, numCell)
+		val = @grid[coords.row][coords.col]
+		return if val != null then @gridChars[val] else ""
+
+	isEditable: (numContainer, numCell) ->
+		coords = @rowColFromCell(numContainer, numCell)
+		return @inputMask[coords.row][coords.col] == 1
 

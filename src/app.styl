@@ -2,9 +2,9 @@
 
 // Theme Variables
 $fgColor = #fff
-$bgColor = rgba(0,0,0, 0.5)
-$borderColor = rgba(255,255,255,0.2)
-$inputColor = #cc8800
+$bgColor = rgba(255,255,255, 0.1)
+$borderColor = rgba(255,255,255,0.3)
+$inputColor = rgba(255,255,0,1)
 
 
 //Mixins
@@ -19,7 +19,7 @@ genGrid($gridSize)
 	.grid-align:nth-child({$gridSize}n+1)
 		clear both
 	
-	.cell			
+	.cell, .cell-value			
 		width $cellSize
 		height $cellSize
 	
@@ -41,34 +41,32 @@ body, .blur-bg
 
 .blur-bg
 	position absolute
-	width 100vw
-	height 100vh
-	-webkit-filter blur(20px) brightness(30%)
-	-background-position -40px -40px
+	width 120%
+	height 120%
+	top -20px
+	left -20px
+	-webkit-filter blur(20px) brightness(40%)
 
-.sudoku-container
+#sudoku-container
 	box-sizing border-box
 	padding 20px
 	margin 20px
-	background-color $bgColor
+	margin-top 30px
 	border-radius 20px
-	position absolute
 	overflow hidden
-	//left 50%
-	//top 50%
-	//transform translateX(-50%) //translateY(-50%)
+	position relative
+	display inline-block
 
 	.title
 		text-transform uppercase
 		text-align center
 		opacity 0.5
 		margin-bottom 30px
+		letter-spacing 8px
 		
 	#sudoku-grid
 		position relative
 		border 2px solid $borderColor
-		//left 50%
-		//transform translateX(-50%)
 		text-align center
 		box-sizing content-box
 
@@ -86,22 +84,14 @@ body, .blur-bg
 			
 		.cell
 			box-sizing content-box
+			background $bgColor
 			padding 3px
-			
-			&.input
-				cursor pointer
-				
-				.cell-value, .cell-hints
-					color $inputColor
-				
-				.cell-hints
-					display block
-					
-				.cell-value
-					display none
-					
-				
-			.cell-hints	
+			position relative
+						
+			.cell-value
+				position absolute
+						
+			.cell-hints
 				display none
 				
 				.cell-hint
@@ -110,6 +100,17 @@ body, .blur-bg
 					width 10px
 					line-height 10px
 		
+			&.editable
+				cursor pointer
+				background none
+				
+				.cell-value, .cell-hints
+					color $inputColor
+				
+				.cell-hints.show-hints
+					display block
+				
+		
 		// Dynamically generate classes for different grid sizes			
 		&.grid2		
 			genGrid(2)
@@ -117,3 +118,34 @@ body, .blur-bg
 			genGrid(3)
 		&.grid4
 			genGrid(4)
+			
+	.btn-bar
+		position relative
+		
+		.btn
+			box-sizing border-box
+			float left
+			width 48%
+			text-align center
+			margin-top 20px
+			padding 10px
+			border 1px solid $borderColor
+			border-radius 5px
+			color $inputColor
+			background-color $bgColor
+			cursor pointer
+			transition background-color 0.2s
+			
+			&:hover, &.selected
+				background-color alpha($bgColor, 0.3)
+			
+			&.left
+				float left
+			&.right
+				float right
+				
+		&:after
+			content " "
+			width 0
+			height 0
+			clear both

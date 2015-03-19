@@ -4,7 +4,7 @@ html
 		
 		// Setup to work like a mobile app
 		meta(charset='utf8')
-		meta(name='viewport' content='user-scalable=0, initial-scale=0.8, width=400')
+		meta(name='viewport' content='user-scalable=1, initial-scale=1, width=432')
 		meta(name='mobile-web-app-capable', content='yes')
 		meta(name='apple-mobile-web-app-capable', content='yes')
 		meta(name='apple-mobile-web-app-status-bar-style', content='black-translucent')
@@ -21,12 +21,15 @@ html
 		script(src='app.js')
 
 	body
-		.sudoku-container
+		#sudoku-container
 			.blur-bg
 			h1.title Uber Sudoku
-			#sudoku-grid(v-attr="class: 'grid' + gridSize")
-				.cell-container.grid-align(v-repeat="numContainer: loop(gridSize)")
-					.cell.grid-align.inputx(v-repeat="numCell: loop(gridSize)")
-						.cell-value(v-text="getCellValue(grid, numContainer, numCell)")
-						.cell-hints
-							.cell-hint.grid-align(v-repeat="numHint: loop(gridSize)" v-text="numHint")
+			#sudoku-grid(v-attr="class: 'grid' + sudoku.gridSize")
+				.cell-container.grid-align(v-repeat="numContainer: loop(sudoku.gridSize)")
+					.cell.grid-align(v-repeat="numCell: loop(sudoku.gridSize)" v-class="editable: sudoku.isEditable(numContainer, numCell)")
+						.cell-value(v-text="sudoku.charAt(numContainer, numCell)")
+						.cell-hints(v-class="show-hints: showHints")
+							.cell-hint.grid-align(v-repeat="numHint: loop(sudoku.gridSize)" v-text="numHint")
+			.btn-bar
+				.btn.left(v-on="click: newGame()") New Game
+				.btn.right(v-class="selected: showHints" v-on="click: showHints = !showHints") Show Hints
