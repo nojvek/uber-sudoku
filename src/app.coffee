@@ -38,8 +38,10 @@ $ ->
 				@sudoku = new SudokuGrid(constants.gridSize)
 				requestAnimationFrame(@animateShuffle)
 
-			onCellClick: (numContainer, numCell) ->
-				c.log numContainer, numCell
+			onCellClick: (elem, numContainer, numCell) ->
+				$cell = $(elem)
+
+				c.log numContainer, numCell, $cell
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->

@@ -33,7 +33,7 @@ html
 							v-class="editable: sudoku.isEditable(numContainer, numCell)"
 							v-on="click: onCellClick(numContainer, numCell)"
 							)
-							.cell-value(v-text="sudoku.charAt(numContainer, numCell)")
+							.cell-value(v-text="sudoku.charAt(e, numContainer, numCell)")
 							.cell-hints(v-class="show-hints: showHints")
 								.cell-hint.grid-align(
 									v-repeat="numHint: loop(sudoku.gridSize)" 

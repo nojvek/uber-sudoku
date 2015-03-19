@@ -48,8 +48,10 @@ $(function() {
         this.sudoku = new SudokuGrid(constants.gridSize);
         return requestAnimationFrame(this.animateShuffle);
       },
-      onCellClick: function(numContainer, numCell) {
-        return c.log(numContainer, numCell);
+      onCellClick: function(elem, numContainer, numCell) {
+        var $cell;
+        $cell = $(elem);
+        return c.log(numContainer, numCell, $cell);
       },
       animateShuffle: function() {
         var $cellValues, chars, frameCounter, innerTexts, renderFrame;
