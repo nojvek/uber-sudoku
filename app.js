@@ -11,6 +11,14 @@ constants = {
 };
 
 $(function() {
+  var updateUrlConstants;
+  updateUrlConstants = function() {
+    var queryMatch;
+    queryMatch = location.search.match(/size=(\d)/);
+    if (queryMatch && (queryMatch[1] === "2" || queryMatch[1] === "4")) {
+      return constants.gridSize = parseInt(queryMatch[1]);
+    }
+  };
   sudokuVue = new Vue({
     el: "#sudoku-container",
     data: {
@@ -25,6 +33,9 @@ $(function() {
       newGame: function() {
         this.sudoku = new SudokuGrid(constants.gridSize);
         return requestAnimationFrame(this.animateShuffle);
+      },
+      onCellClick: function(numContainer, numCell) {
+        return c.log(numContainer, numCell);
       },
       animateShuffle: function() {
         var $cellValues, chars, frameCounter, innerTexts, renderFrame;
@@ -55,6 +66,7 @@ $(function() {
       }
     }
   });
+  updateUrlConstants();
   return sudokuVue.newGame();
 });
 

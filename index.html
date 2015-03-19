@@ -19,12 +19,12 @@
     <script src="app.js"></script>
   </head>
   <body>
-    <div id="sudoku-container">
+    <div id="sudoku-container" class="center-align">
       <div class="bg"></div>
       <h1 class="title">Uber Sudoku</h1>
-      <div id="sudoku-grid" v-attr="class: 'grid' + sudoku.gridSize">
+      <div id="sudoku-grid" v-attr="class: 'center-align grid' + sudoku.gridSize">
         <div v-repeat="numContainer: loop(sudoku.gridSize)" class="cell-container grid-align">
-          <div v-repeat="numCell: loop(sudoku.gridSize)" v-class="editable: sudoku.isEditable(numContainer, numCell)" class="cell grid-align">
+          <div v-repeat="numCell: loop(sudoku.gridSize)" v-class="editable: sudoku.isEditable(numContainer, numCell)" v-on="click: onCellClick(numContainer, numCell)" class="cell grid-align">
             <div v-text="sudoku.charAt(numContainer, numCell)" class="cell-value"></div>
             <div v-class="show-hints: showHints" class="cell-hints">
               <div v-repeat="numHint: loop(sudoku.gridSize)" v-text="numHint" class="cell-hint grid-align"></div>
