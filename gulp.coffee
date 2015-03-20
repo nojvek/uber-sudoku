@@ -70,8 +70,8 @@ gulp.task 'watch', ['server'], ->
 
 gulp.task 'gh-pages', ->
 	logger = (err, stdout, stderr) ->
-		gutil.log stdout if stdout
-		gutil.log stderr if stderr
+		c.log stdout if stdout
+		c.log stderr if stderr
 
 	exec "git subtree push --prefix dist dist gh-pages", logger
 
