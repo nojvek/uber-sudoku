@@ -38,10 +38,17 @@ $ ->
 				@sudoku = new SudokuGrid(constants.gridSize)
 				requestAnimationFrame(@animateShuffle)
 
-			onCellClick: (elem, numContainer, numCell) ->
-				$cell = $(elem)
+			onCellClick: (e, numContainer, numCell) ->
+				$cell = $(e.currentTarget)
+				pos = $cell.position()
+				$("#input-grid").addClass("show").css
+					left: pos.left + $cell.outerWidth()/2
+					top: pos.top + $cell.outerHeight()/2
 
-				c.log numContainer, numCell, $cell
+				c.log numContainer, numCell, $cell, pos
+
+			onInputClick: (e) ->
+				$("#input-grid").removeClass("show")
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->

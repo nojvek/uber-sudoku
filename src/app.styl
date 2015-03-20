@@ -11,8 +11,8 @@ $inputColor = rgba(255,255,0,0.7)
 // with genGrid we can pregenerate CSS for 2,3,4 gridSizes
 genGrid($gridSize)
 	$cellSize = (10px * $gridSize)
-	$width = ((($cellSize + 8) * $gridSize + 2)* $gridSize)
-
+	$cellPadded = $cellSize + 8
+	$width = (($cellPadded * $gridSize + 2)* $gridSize)
 	width $width
 	height $width
 
@@ -22,10 +22,14 @@ genGrid($gridSize)
 	.cell, .cell-value, .input	
 		width $cellSize
 		height $cellSize
-		font-size ($cellSize - $gridSize*2)
+		font-size ($cellSize - $gridSize * 2)
 	
 	.cell-value
 		line-height $cellSize
+		
+	#input-grid
+		width $cellPadded * $gridSize
+		height $cellPadded * $gridSize
 				
 	
 // Style
@@ -48,11 +52,11 @@ body
 #sudoku-container
 	box-sizing border-box
 	padding 30px
-	overflow hidden
 	display inline-block
 	position absolute
 	transform-origin 0 0
-
+	position relative
+	
 	.title
 		text-transform uppercase
 		text-align center
@@ -111,7 +115,7 @@ body
 					border 1px solid alpha($inputColor, 0.7)
 					background-color alpha($inputColor, 0.3)
 
-		.input-grid
+		#input-grid
 			position absolute
 			top 0
 			left 0
@@ -120,7 +124,6 @@ body
 			color $inputColor
 			cursor pointer
 			transition transform 0.2s
-			transform-origin center center
 			transform scale(0)
 			
 			&.show
@@ -140,8 +143,6 @@ body
 				content " "
 				clear both
 			
-				
-		
 		// Dynamically generate classes for different grid sizes			
 		&.grid2		
 			genGrid(2)
@@ -150,6 +151,7 @@ body
 		&.grid4
 			genGrid(4)
 			
+
 	.btn-bar
 		position relative
 		

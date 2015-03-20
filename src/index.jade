@@ -31,16 +31,17 @@ html
 						.cell.grid-align(
 							v-repeat="numCell: loop(sudoku.gridSize)" 
 							v-class="editable: sudoku.isEditable(numContainer, numCell)"
-							v-on="click: onCellClick(numContainer, numCell)"
-							)
-							.cell-value(v-text="sudoku.charAt(e, numContainer, numCell)")
+							v-on="click: onCellClick($event, numContainer, numCell)")
+							.cell-value(v-text="sudoku.charAt(numContainer, numCell)")
 							.cell-hints(v-class="show-hints: showHints")
 								.cell-hint.grid-align(
 									v-repeat="numHint: loop(sudoku.gridSize)" 
-									v-text="sudoku.hintAt(numContainer, numCell, numHint)"
-									)
-				.input-grid
-					.input.grid-align(v-repeat="char: sudoku.gridChars" v-text="char")
+									v-text="sudoku.hintAt(numContainer, numCell, numHint)")
+				#input-grid
+					.input.grid-align(
+						v-repeat="char: sudoku.gridChars" 
+						v-text="char"
+						v-on="click: onInputClick($event)")
 
 			.btn-bar
 				.btn.left(v-on="click: newGame()") New Game

@@ -48,10 +48,18 @@ $(function() {
         this.sudoku = new SudokuGrid(constants.gridSize);
         return requestAnimationFrame(this.animateShuffle);
       },
-      onCellClick: function(elem, numContainer, numCell) {
-        var $cell;
-        $cell = $(elem);
-        return c.log(numContainer, numCell, $cell);
+      onCellClick: function(e, numContainer, numCell) {
+        var $cell, pos;
+        $cell = $(e.currentTarget);
+        pos = $cell.position();
+        $("#input-grid").addClass("show").css({
+          left: pos.left + $cell.outerWidth() / 2,
+          top: pos.top + $cell.outerHeight() / 2
+        });
+        return c.log(numContainer, numCell, $cell, pos);
+      },
+      onInputClick: function(e) {
+        return $("#input-grid").removeClass("show");
       },
       animateShuffle: function() {
         var $cellValues, chars, frameCounter, innerTexts, renderFrame;
