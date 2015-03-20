@@ -26,23 +26,24 @@ html
 			.bg
 			h1.title Uber Sudoku
 			#sudoku-grid(v-attr="class: 'center-align grid' + sudoku.gridSize")
-				.cell-grid
+				.cell-grid.clearfix
 					.cell-container.grid-align(v-repeat="numContainer: loop(sudoku.gridSize)")
 						.cell.grid-align(
 							v-repeat="numCell: loop(sudoku.gridSize)" 
 							v-class="editable: sudoku.isEditable(numContainer, numCell)"
-							v-on="click: onCellClick($event, numContainer, numCell)")
+							v-on="click: onCellClick(numContainer, numCell)")
 							.cell-value(v-text="sudoku.charAt(numContainer, numCell)")
 							.cell-hints(v-class="show-hints: showHints")
 								.cell-hint.grid-align(
 									v-repeat="numHint: loop(sudoku.gridSize)" 
 									v-text="sudoku.hintAt(numContainer, numCell, numHint)")
-				#input-grid
-					.input.grid-align(
-						v-repeat="char: sudoku.gridChars" 
-						v-text="char"
-						v-on="click: onInputClick($event)")
 
-			.btn-bar
+			#input-grid(v-attr="class: 'center-align clearfix grid' + sudoku.gridSize")
+				.input(
+					v-repeat="sudoku.gridChars" 
+					v-text="$value"
+					v-on="click: onInputClick($index)")
+
+			.btn-bar.clearfix
 				.btn.left(v-on="click: newGame()") New Game
 				.btn.right(v-class="selected: showHints" v-on="click: showHints = !showHints") Show Hints

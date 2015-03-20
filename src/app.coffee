@@ -29,26 +29,20 @@ $ ->
 		el: "#sudoku-container"
 		data:
 			showHints: false
-			inputMask: []
 			sudoku: null
+			selectedCellPos: null
 
 		methods:
 			loop: (size) -> _.range(0, size * size)
 			newGame: ->
 				@sudoku = new SudokuGrid(constants.gridSize)
-				requestAnimationFrame(@animateShuffle)
+				requestAnimationFrame(@animateShuffle)	
 
-			onCellClick: (e, numContainer, numCell) ->
-				$cell = $(e.currentTarget)
-				pos = $cell.position()
-				$("#input-grid").addClass("show").css
-					left: pos.left + $cell.outerWidth()/2
-					top: pos.top + $cell.outerHeight()/2
+			onCellClick: (numContainer, numCell) ->
+				c.log numContainer, numCell
 
-				c.log numContainer, numCell, $cell, pos
-
-			onInputClick: (e) ->
-				$("#input-grid").removeClass("show")
+			onInputClick: (numInput) ->
+				c.log numInput
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
@@ -92,12 +86,25 @@ class SudokuGrid
 		We're trying not to hard code the grid size in code
 		Ideally by changing gridSize here and app.styl variable
 		we can work with 4x4 sudokus
+
 	@grid
 		Stores the 2 dimensional grid. Constructor will create the 2 dimensional grid
+
 	@gridChars
-		For a 2x2 sudoku they are a..d
+		For a 2x2 sudoku they are 1...4
 		For a 3x3 sudoku these are just 1...9
-		for a 4x4 sudoku they are 0..9a..f
+		for a 4x4 sudoku they are 0...9a...f
+
+	@hintTable
+		A hint table contains possible selectable options
+		It is always a valid sudoku if any of the selections are made
+		Rather than running a validation run on every move
+		we trim down the hint table as the user makes choices
+
+	@inputMask
+		2 dimensional table same size as grid generated randomly
+		0 means value cannot be edited by the user
+		1 means the value can be edited by the user
 	###
 	constructor: (gridSize = 3) ->
 		if not (gridSize >= 2 and gridSize <= 4)
@@ -116,9 +123,11 @@ class SudokuGrid
 		
 		@gridSize = gridSize
 		@gridLen = gridSize * gridSize
-		@grid = @identity()
-		@shuffleGrid()
-		@inputMask = @randomInputMask()
+		@grid = @createEmptyGrid()
+		@inputMask = @createRandomInputMask()
+		@hintTable = @createHintTable()
+		#@grid = @identity()
+		#@shuffleGrid()
 		@applyInputMask()
 
 
@@ -152,6 +161,7 @@ class SudokuGrid
 
 	###
 	Randomize by swapping rows and columns between a cell-container
+	We aren't currently using this method is it doesn't truly randomize the grid
 	###
 	shuffleGrid: ->
 		grid = @grid
@@ -166,8 +176,6 @@ class SudokuGrid
 			else if rowMul = 1
 				col1 = num1
 				col2 = num2
-
-			#c.log row1, row2, col1, col2, rowMul, colMul
 
 			for i in [0...len] by 1
 				rowAdd = i * rowMul
@@ -188,19 +196,94 @@ class SudokuGrid
 					num1 = Math.floor(Math.random() * size) + offset
 					num2 = (num1 + 1) % size + offset
 					swap(num1, num2, 1, 0)
-
-
-
-		#swap cols
 		return @grid
 
 	###
-	Generates a size x size input mask with the same dimensions as the grid
-	0 means value cannot be edited by the user
-	1 means the value can be edited by the user
+	Create an empty grid of size:size and set all values to null
 	###
-	randomInputMask: ->
-		@inputMask = []
+	createEmptyGrid: ->
+		grid = []
+		len = @gridLen
+
+		for i in [0...len] by 1
+			row = []
+			for j in [0...len] by 1
+				row.push(null)
+			grid.push(row)
+		
+		return grid
+
+
+	###
+	Create a blank hint table, inside each cell we store an hash map (object)
+	with keys as possible choices
+	###
+	createHintTable: ->
+		hintTable = []
+		len = @gridLen
+
+		for i in [0...len] by 1
+			row = []
+			for j in [0...len] by 1
+				options = {}
+				for k in [0...len] by 1
+					options[k] = true
+				row.push(options)
+			hintTable.push(row)
+		
+		return hintTable
+
+	###
+	Remove all other values apart from the passed value for the cell
+	Trim other cells by row, col and container
+	If in the process of trimming we encounter a naked singlet
+	then we add it to a queue and trim it in a another pass
+	###
+	trimHintTable: (row, col, index) ->
+		hintTable = @hintTable
+		inputMask = @inputMask
+		len = @gridLen
+		size = @gridSize
+
+		removeHint = (row, col, index) =>
+			hintHash = hintTable[row][col]
+			delete hintHash[index]
+			hints = Object.keys(hintHash)
+			if hints.length == 1 and @inputMask[row][col] == 1
+				c.log "orphan", row, col, hints[0]
+				@trimHintTable(row, col, hints[0])
+
+			return
+
+		hintHash = hintTable[row][col]
+		if hintHash
+			for i in [0...len] by 1
+				removeHint(i, col, index)
+
+			for j in [0...len] by 1
+				removeHint(row, j, index)
+
+			containerRow = Math.floor(row/size)
+			containerCol = Math.floor(col/size)
+
+			for i in [0...size] by 1
+				for j in [0...size] by 1
+					removeHint(i, j, index)
+
+			for key in Object.keys(hintHash)
+				delete hintHash[key]
+
+			hintTable[row][col][index] = true
+			return true
+
+		return false
+
+
+	###
+	Generates a size x size input mask with the same dimensions as the grid
+	###
+	createRandomInputMask: ->
+		inputMask = []
 		len = @gridLen
 
 		for i in [0...len] by 1
@@ -208,22 +291,32 @@ class SudokuGrid
 			for j in [0...len] by 1
 				if Math.random() > 0.5 then val = 0 else val = 1
 				row.push(val)
-			@inputMask.push(row)
+			inputMask.push(row)
 		
-		return @inputMask
+		return inputMask
 
 	###
 	Set values in grid to null if input mask cell is set to 1
-	We randomly set cells to be editable
+	Randomly select the hint (index)
+	Running this function gives us a random sudoku
+	Although since this is electronic, the grids generated might 
+	have more than one solution. But we are fine with that
 	###
 	applyInputMask:  ->
 		len = @gridLen
 		for i in [0...len] by 1
 			for j in [0...len] by 1
-				if @inputMask[i][j] == 1
-					@grid[i][j] = null
+				if @inputMask[i][j] == 0
+					hints = Object.keys(@hintTable[i][j])
+					randomHint = _.sample(hints)
+					@grid[i][j] = randomHint
+					@trimHintTable(i, j, randomHint)
+
 		return @inputMask
 
+	###
+	Coordinate and self explanatory access functions below
+	###
 	rowColFromCell: (numContainer, numCell) ->
 		size = @gridSize
 		col = numContainer % size
@@ -237,9 +330,10 @@ class SudokuGrid
 		val = @grid[coords.row][coords.col]
 		return if val != null then @gridChars[val] else ""
 
-	hintAt: (numContainer, numCell, numHint) ->
+	hintAt: (numContainer, numCell, index) ->
 		coords = @rowColFromCell(numContainer, numCell)
-		return @gridChars[numHint]
+		hints = @hintTable[coords.row][coords.col]
+		return if hints[index] then @gridChars[index] else ""
 
 	isEditable: (numContainer, numCell) ->
 		coords = @rowColFromCell(numContainer, numCell)

@@ -13,8 +13,14 @@ genGrid($gridSize)
 	$cellSize = (10px * $gridSize)
 	$cellPadded = $cellSize + 8
 	$width = (($cellPadded * $gridSize + 2)* $gridSize)
-	width $width
-	height $width
+	
+	&#sudoku-grid
+		width $width
+		height $width
+		
+	&#input-grid
+		width $width
+		padding-left 1px * $gridSize
 
 	.grid-align:nth-child({$gridSize}n+1)
 		clear both
@@ -23,13 +29,8 @@ genGrid($gridSize)
 		width $cellSize
 		height $cellSize
 		font-size ($cellSize - $gridSize * 2)
-	
-	.cell-value
+		text-align center
 		line-height $cellSize
-		
-	#input-grid
-		width $cellPadded * $gridSize
-		height $cellPadded * $gridSize
 				
 	
 // Style
@@ -48,6 +49,12 @@ body
 	position relative
 	left 50%
 	transform translateX(-50%)
+	
+.clearfix:after
+	display block
+	content " "
+	clear both
+	
 
 #sudoku-container
 	box-sizing border-box
@@ -55,8 +62,15 @@ body
 	display inline-block
 	position absolute
 	transform-origin 0 0
-	position relative
-	
+
+	// Dynamically generate classes for different grid sizes			
+	.grid2		
+		genGrid(2)
+	.grid3
+		genGrid(3)
+	.grid4
+		genGrid(4)
+		
 	.title
 		text-transform uppercase
 		text-align center
@@ -69,11 +83,7 @@ body
 		border 2px solid $borderColor
 		text-align center
 		box-sizing content-box
-
-		&:after
-			display block
-			content " "
-			clear both
+		
 		
 		// Use CSS to align to 9x9 grid
 		.grid-align
@@ -93,7 +103,7 @@ body
 				position absolute
 						
 			.cell-hints
-				display none
+				//display none
 				
 				.cell-hint
 					font-size 8px
@@ -115,41 +125,20 @@ body
 					border 1px solid alpha($inputColor, 0.7)
 					background-color alpha($inputColor, 0.3)
 
-		#input-grid
-			position absolute
-			top 0
-			left 0
-			border 2px solid $inputColor
-			background-color #000
-			color $inputColor
+	#input-grid
+		margin-top 15px
+		color $inputColor
+		
+		.input
+			padding 3px
+			border 1px solid $inputColor
+			transition background-color 0.2s
+			float left
 			cursor pointer
-			transition transform 0.2s
-			transform scale(0)
-			
-			&.show
-				transform scale(1)
-			
-			.input
-				padding 3px
-				border 1px solid $inputColor
-				transition background-color 0.2s
-				
-				&:hover
-					background-color darken(alpha($inputColor, 1), 50%)
 
-				
-			&:after
-				display block
-				content " "
-				clear both
 			
-		// Dynamically generate classes for different grid sizes			
-		&.grid2		
-			genGrid(2)
-		&.grid3
-			genGrid(3)
-		&.grid4
-			genGrid(4)
+			&:hover
+				background-color alpha($inputColor, 0.3)
 			
 
 	.btn-bar
@@ -176,9 +165,4 @@ body
 				float left
 			&.right
 				float right
-				
-		&:after
-			content " "
-			width 0
-			height 0
-			clear both
+
