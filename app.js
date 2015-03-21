@@ -84,7 +84,7 @@ createSudokuVue = function() {
       },
       animateShuffle: function() {
         var $cellValues, chars, frameCounter, innerTexts, renderFrame;
-        $cellValues = $(".cell:not(.editable) > .cell-value");
+        $cellValues = $(".cell > .cell-value");
         innerTexts = $.map($cellValues, function(elem) {
           return elem.innerText;
         });
@@ -250,7 +250,7 @@ SudokuGrid = (function() {
    */
 
   SudokuGrid.prototype.randomizeGrid = function() {
-    var blockSize, col, grid, i, k, l, m, n, n1, n2, numCells, o, offset, ref, ref1, ref2, ref3, ref4, replaceMap, row, shuffledGridChars, swap;
+    var blockSize, col, grid, i, k, l, m, n, n1, n2, numCells, o, offset, p, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, replaceMap, row, shuffledGridChars, swap;
     grid = this.grid;
     shuffledGridChars = _.shuffle(this.gridChars);
     replaceMap = _.object(this.gridChars, shuffledGridChars);
@@ -266,9 +266,9 @@ SudokuGrid = (function() {
       return grid[row2 * numCells + col2] = temp;
     };
     for (c = l = 0, ref1 = constants.numSwaps; l < ref1; c = l += 1) {
-      offset = (c % blockSize) * blockSize;
-      n1 = Math.floor(Math.random() * blockSize) + offset;
-      n2 = Math.floor(Math.random() * blockSize) + offset;
+      offset = c % blockSize;
+      n1 = Math.floor(Math.random() * blockSize) * blockSize + offset;
+      n2 = Math.floor(Math.random() * blockSize) * blockSize + offset;
       for (row = m = 0, ref2 = numCells; m < ref2; row = m += 1) {
         swap(row, n1, row, n2);
       }
@@ -277,7 +277,15 @@ SudokuGrid = (function() {
       offset = (c % blockSize) * blockSize;
       n1 = Math.floor(Math.random() * blockSize) + offset;
       n2 = Math.floor(Math.random() * blockSize) + offset;
-      for (col = o = 0, ref4 = numCells; o < ref4; col = o += 1) {
+      for (row = o = 0, ref4 = numCells; o < ref4; row = o += 1) {
+        swap(row, n1, row, n2);
+      }
+    }
+    for (c = p = 0, ref5 = constants.numSwaps; p < ref5; c = p += 1) {
+      offset = (c % blockSize) * blockSize;
+      n1 = Math.floor(Math.random() * blockSize) + offset;
+      n2 = Math.floor(Math.random() * blockSize) + offset;
+      for (col = q = 0, ref6 = numCells; q < ref6; col = q += 1) {
         swap(n1, col, n2, col);
       }
     }
