@@ -19,15 +19,21 @@ This is my attempt at the Uber programming challenge.
  * **Gulp**. The build system is quite magical. Running "gulp" fires up a tiny express server with live-reload. Any time a src file is changed, the files are automatically pre-processed and the browser is hot-loaded with the latest code within milli-seconds. I've used "gulp deploy" automatically update the gh-pages branch to master. the dist folder is setup is as an external-repo. I love how fast it is.
 
 ### What can be improved?
- * **Tests**. I was planning to use jasmine and integrate the tests with watch task, however I didn't get enough time.
+ * Tests. I was planning to use jasmine and integrate the tests with watch task, however I didn't get enough time.
  * Finish game animation. I wanted to use a css-3d animation makes the cells dance when complete. 
  * I could probably improve the initial loading perf and make it offline capable.
  * I've been wanting to try sharejs. Multiplayer would make it social.
 
 ### screenshots
+
 Desktop
-!(assets/screenshots/desktop.jpg?raw=true)
+
+![](assets/screenshots/desktop.jpg?raw=true)
+
 iPhone
-!(assets/screenshots/iphone.jpg?raw=true)
+
+![](assets/screenshots/iphone.jpg?raw=true)
+
 iPad
-!(assets/screenshots/ipad.jpg?raw=true)
+
+![](assets/screenshots/ipad.jpg?raw=true)
