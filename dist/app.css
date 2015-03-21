@@ -42,10 +42,6 @@ body {
   width: 116px;
   height: 116px;
 }
-#sudoku-container .grid2#input-grid {
-  width: 116px;
-  padding-left: 2px;
-}
 #sudoku-container .grid2 .grid-align:nth-child(2n+1) {
   clear: both;
 }
@@ -62,10 +58,6 @@ body {
   width: 348px;
   height: 348px;
 }
-#sudoku-container .grid3#input-grid {
-  width: 348px;
-  padding-left: 3px;
-}
 #sudoku-container .grid3 .grid-align:nth-child(3n+1) {
   clear: both;
 }
@@ -81,10 +73,6 @@ body {
 #sudoku-container .grid4#sudoku-grid {
   width: 776px;
   height: 776px;
-}
-#sudoku-container .grid4#input-grid {
-  width: 776px;
-  padding-left: 4px;
 }
 #sudoku-container .grid4 .grid-align:nth-child(4n+1) {
   clear: both;
@@ -138,6 +126,9 @@ body {
 #sudoku-container #sudoku-grid .cell .cell-value {
   position: absolute;
 }
+#sudoku-container #sudoku-grid .cell .cell-hints {
+  display: none;
+}
 #sudoku-container #sudoku-grid .cell .cell-hints .cell-hint {
   font-size: 8px;
   height: 10px;
@@ -155,17 +146,20 @@ body {
 #sudoku-container #sudoku-grid .cell.editable .cell-hints.show-hints {
   display: block;
 }
-#sudoku-container #sudoku-grid .cell.editable:hover {
+#sudoku-container #sudoku-grid .cell.editable:hover,
+#sudoku-container #sudoku-grid .cell.editable.selected {
   border: 1px solid rgba(255,255,0,0.7);
   background-color: rgba(255,255,0,0.3);
 }
 #sudoku-container #input-grid {
+  display: inline-block;
   margin-top: 15px;
   color: rgba(255,255,0,0.7);
+  border: 2px solid rgba(255,255,0,0.5);
 }
 #sudoku-container #input-grid .input {
   padding: 3px;
-  border: 1px solid rgba(255,255,0,0.7);
+  border: 1px solid rgba(255,255,0,0.5);
   -webkit-transition: background-color 0.2s;
   -moz-transition: background-color 0.2s;
   -o-transition: background-color 0.2s;

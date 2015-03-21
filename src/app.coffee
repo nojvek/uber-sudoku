@@ -3,8 +3,8 @@ sudokuVue = null
 sudoku = null
 
 constants =
-	gridSize: 3
-	numSwaps: 10
+	blockSize: 3
+	numSwaps: 42
 	numAnimFrames: 30
 	editableProbability: 0.7
 
@@ -14,7 +14,7 @@ $ ->
 	parseUrlVars = ->
 		queryMatch = location.search.match(/size=(\d)/)
 		if queryMatch and (queryMatch[1] == "2" or queryMatch[1] == "4")
-			constants.gridSize = parseInt(queryMatch[1])
+			constants.blockSize = parseInt(queryMatch[1])
 
 	autoScaleGrid = ->
 		$container = $("#sudoku-container")
@@ -32,19 +32,33 @@ $ ->
 		data:
 			showHints: false
 			sudoku: null
-			selectedCellPos: null
+			selectedCellIndex: null
 
 		methods:
 			loop: (size) -> _.range(0, size * size)
+
+			toIndex: (numBlock, numCell) ->
+				size = constants.blockSize
+				col = numBlock % size
+				row = Math.floor(numBlock / size)
+				col = col * size + numCell % size
+				row = row * size + Math.floor(numCell / size)
+				return row * size * size + col
+
 			newGame: ->
-				@sudoku = new SudokuGrid(constants.gridSize)
-				requestAnimationFrame(@animateShuffle)	
+				@sudoku = new SudokuGrid(constants.blockSize)
+				requestAnimationFrame(@animateShuffle)
 
-			onCellClick: (numBlock, numCell) ->
-				c.log numBlock, numCell
 
-			onInputClick: (numInput) ->
-				c.log numInput
+			onCellClick: (index) ->
+				console.log "cellClick", index
+				if sudoku.editableMask[index]
+					@selectedCellIndex = index
+
+			onInputClick: (val) ->
+				console.log "inputClick", val
+				if @selectedCellIndex != null
+					@sudoku.grid.$set(@selectedCellIndex, val)
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
@@ -70,36 +84,25 @@ $ ->
 
 	parseUrlVars()
 	sudokuVue.newGame()
+	sudoku = sudokuVue.sudoku #for debugging
 
 	$(window).on('resize', autoScaleGrid)
 	requestAnimationFrame(autoScaleGrid)
 
-	
-	sudoku = sudokuVue.sudoku
-	sudoku.trimHintTable 0, 1, 2 
-	sudoku.trimHintTable 0, 2, 1 
-	sudoku.trimHintTable 1, 0, 0 
-	sudoku.trimHintTable 2, 1, 0 
-	#sudoku.trimHintTable 3, 2, 2
-	sudokuVue.sudoku = null; sudokuVue.sudoku = sudoku
-	
-
 
 ###
-SudokuGrid works on a datastructure of a 2 dimensional grid
-and a 2 dimensional input mask of the same size.
-
-It contains functions for grid generation, validation and hinting
+SudokuGrid contains functions for grid generation, validation and hinting
 ###
 class SudokuGrid
 	###
-	@gridSize
+	@blockSize
 		We're trying not to hard code the grid size in code
-		Ideally by changing gridSize here and app.styl variable
-		we can work with 4x4 sudokus
+		blockSize can be change by using the url param ?size=2 or ?size=4
+		2x2 are cute, and 4x4 are quite a bit of fun
 
 	@grid
-		Stores the 2 dimensional grid. Constructor will create the 2 dimensional grid
+		Store the sudoku grid in a dimensional array
+		null values in array means they haven't been filled
 
 	@gridChars
 		For a 2x2 sudoku they are 1...4
@@ -108,23 +111,21 @@ class SudokuGrid
 
 	@hintTable
 		A hint table contains possible selectable options
-		It is always a valid sudoku if any of the selections are made
-		Rather than running a validation run on every move
-		we trim down the hint table as the user makes choices
+		It is used when showHints is pressed
+		We also trim the hints as the user makes selections
 
-	@inputMask
-		2 dimensional table same size as grid generated randomly
+	@editableMask
+		An array the same size as the grid
 		0 means value cannot be edited by the user
 		1 means the value can be edited by the user
 	###
-	constructor: (gridSize = 3) ->
-		if not (gridSize >= 2 and gridSize <= 4)
+	constructor: (blockSize = 3) ->
+		if not (blockSize >= 2 and blockSize <= 4)
 			throw new Error("Grid Size should be between 2 and 4")
 
 		charA = 97
-		switch gridSize
+		switch blockSize
 			when 2
-				@gridChars = (String.fromCharCode(i) for i in [charA ... charA + 4] by 1)
 				@gridChars = (i.toString() for i in [1 ... 5] by 1)
 			when 3
 				@gridChars = (i.toString() for i in [1 ... 10] by 1)
@@ -132,10 +133,11 @@ class SudokuGrid
 				@gridChars = (i.toString() for i in [0 ... 10] by 1)
 				@gridChars = @gridChars.concat (String.fromCharCode(i) for i in [charA ... charA + 6] by 1)
 		
-		@gridSize = gridSize
-		@gridLen = gridSize * gridSize
-		@grid = @createEmptyGrid()
-		@inputMask = @createRandomInputMask()
+		@blockSize = blockSize
+		@numCells = blockSize * blockSize
+		@grid = @createIdentityGrid()
+		@randomizeGrid()
+		@editableMask = @createRandomEditableMask()
 		@hintTable = @createHintTable()
 		#@applyInputMask()
 
@@ -154,72 +156,61 @@ class SudokuGrid
 		678912345
 		912345678
 	###
-	identity: ->
-		@grid = []
-		size = @gridSize
-		len = @gridLen
-
-		for i in [0...len] by 1
-			row = []
-			for j in [0...len] by 1
-				index = ((i * size + j + Math.floor(i / size)) % len)
-				row.push(index)
-			@grid.push(row)
-		
-		return @grid
-
-	###
-	Randomize by swapping rows and columns between a block
-	We aren't currently using this method is it doesn't truly randomize the grid
-	###
-	shuffleGrid: ->
-		grid = @grid
-		size = @gridSize
-		len = size * size
-
-		swap = (num1, num2, rowMul, colMul) ->
-			row1 = row2 = col1 = col2 = 0
-			if colMul == 1
-				row1 = num1
-				row2 = num2
-			else if rowMul = 1
-				col1 = num1
-				col2 = num2
-
-			for i in [0...len] by 1
-				rowAdd = i * rowMul
-				colAdd = i * colMul
-				temp = grid[row1 + rowAdd][col1 + colAdd]
-				grid[row1 + rowAdd][col1 + colAdd] = grid[row2 + rowAdd][col2 + colAdd]
-				grid[row2 + rowAdd][col2 + colAdd] = temp
-
-
-		for i in [0...constants.numSwaps] by 1
-			for numCell in [0...size] by 1
-				if Math.random() > 0.5 
-					offset = numCell * size			
-					num1 = Math.floor(Math.random() * size) + offset
-					num2 = (num1 + 1) % size + offset
-
-				if Math.random() > 0.5 
-					num1 = Math.floor(Math.random() * size) + offset
-					num2 = (num1 + 1) % size + offset
-					swap(num1, num2, 1, 0)
-		return @grid
-
-	###
-	Create an empty grid of size:size and set all values to null
-	###
-	createEmptyGrid: ->
+	createIdentityGrid: ->
 		grid = []
-		len = @gridLen
 
-		for i in [0...len] by 1
-			row = []
-			for j in [0...len] by 1
-				row.push(null)
-			grid.push(row)
+		for i in [0...@numCells] by 1
+			for j in [0...@numCells] by 1
+				index = ((i * @blockSize + j + Math.floor(i / @blockSize)) % @numCells)
+				grid.push(@gridChars[index])
 		
+		return grid
+
+
+	randomizeGrid: ->
+		grid = @grid
+		shuffledGridChars = _.shuffle(@gridChars)
+		replaceMap = _.object(@gridChars, shuffledGridChars)
+		blockSize = @blockSize
+		numCells = @numCells
+
+		# Think of this like an enigma cipher. 
+		# We substitute one character with another
+		#for i in [0...@grid.length] by 1
+		#	grid[i] = replaceMap[grid[i]]
+
+		# We swap between blocks, rows and cols
+		# Algorithm based on http://blog.forret.com/2006/08/a-sudoku-challenge-generator/
+
+		swap = (r1, c1, r2, c2) ->
+			temp = grid[r1 * numCells + c1]
+			grid[r1 * numCells + c1] = grid[r2 * numCells + c2]
+			grid[r2 * numCells + c2] = temp
+
+		for c in [0...constants.numSwaps] by 1
+			offset = c % blockSize
+			n1 = Math.floor(Math.random() * blockSize) * blockSize + offset
+			n2 = Math.floor(Math.random() * blockSize) * blockSize + offset
+
+			for row in [0...numCells] by 1
+				swap(row, n1, row, n2)
+
+		for c in [0...constants.numSwaps] by 1
+			offset = (c % blockSize) * blockSize
+			n1 = Math.floor(Math.random() * blockSize) + offset
+			n2 = Math.floor(Math.random() * blockSize) + offset
+
+			for row in [0...numCells] by 1
+				swap(row, n1, row, n2)
+
+		for c in [0...constants.numSwaps] by 1
+			offset = (c % blockSize) * blockSize
+			n1 = Math.floor(Math.random() * blockSize) + offset
+			n2 = Math.floor(Math.random() * blockSize) + offset
+
+			for col in [0...numCells] by 1
+				swap(n1, col, n2, col)		
+
 		return grid
 
 
@@ -229,17 +220,14 @@ class SudokuGrid
 	###
 	createHintTable: ->
 		hintTable = []
-		len = @gridLen
-
-		for i in [0...len] by 1
-			row = []
-			for j in [0...len] by 1
-				options = {}
-				for k in [0...len] by 1
-					options[k] = true
-				row.push(options)
-			hintTable.push(row)
-		
+		for i in [0...@grid.length] by 1
+			hintMap = {}
+			if @editableMask[i] == 0
+				hintMap[@grid[i]] = @grid[i]
+			else 
+				for char in @gridChars
+					hintMap[char] = char
+			hintTable.push(hintMap)
 		return hintTable
 
 	###
@@ -251,9 +239,9 @@ class SudokuGrid
 	trimHintTable: (row, col, index) ->
 		c.log "sudoku.trimHintTable(", row, col, index, ")"
 		hintTable = @hintTable
-		inputMask = @inputMask
-		len = @gridLen
-		size = @gridSize
+		editableMask = @editableMask
+		len = @numCells
+		size = @blockSize
 		trimQueue = [{row: row, col: col, index: index}]
 
 		removeHint = (row, col, index) =>
@@ -304,61 +292,13 @@ class SudokuGrid
 	###
 	Generates a size x size input mask with the same dimensions as the grid
 	###
-	createRandomInputMask: ->
-		inputMask = []
-		len = @gridLen
+	createRandomEditableMask: ->
+		editableMask = []
 
-		for i in [0...len] by 1
-			row = []
-			for j in [0...len] by 1
-				if Math.random() > constants.editableProbability then val = 0 else val = 1
-				row.push(val)
-			inputMask.push(row)
-		
-		return inputMask
+		for i in [0...@grid.length] by 1
+			if Math.random() > constants.editableProbability then val = 0 else val = 1
+			if val == 1 then @grid[i] = ""	
+			editableMask.push(val)
+		return editableMask
 
-	###
-	Set values in grid to null if input mask cell is set to 1
-	Randomly select the hint (index)
-	Running this function gives us a random sudoku
-	Although since this is electronic, the grids generated might 
-	have more than one solution. But we are fine with that
-	###
-	applyInputMask:  ->
-		len = @gridLen
-		for i in [0...len] by 1
-			for j in [0...len] by 1
-				if @inputMask[i][j] == 0
-					hints = Object.keys(@hintTable[i][j])
-					randomHint = _.sample(hints)
-					@grid[i][j] = randomHint
-					if hints.length > 1
-						@trimHintTable(i, j, randomHint)
-
-		return @inputMask
-
-	###
-	Coordinate and self explanatory access functions below
-	###
-	rowColFromCell: (numBlock, numCell) ->
-		size = @gridSize
-		col = numBlock % size
-		row = Math.floor(numBlock / size)
-		col = col * size + numCell % size
-		row = row * size + Math.floor(numCell / size)
-		return row:row, col:col
-
-	charAt: (numBlock, numCell) ->
-		coords = @rowColFromCell(numBlock, numCell)
-		val = @grid[coords.row][coords.col]
-		return if val != null then @gridChars[val] else ""
-
-	hintAt: (numBlock, numCell, index) ->
-		coords = @rowColFromCell(numBlock, numCell)
-		hints = @hintTable[coords.row][coords.col]
-		return if hints[index] then @gridChars[index] else ""
-
-	isEditable: (numBlock, numCell) ->
-		coords = @rowColFromCell(numBlock, numCell)
-		return @inputMask[coords.row][coords.col] == 1
 

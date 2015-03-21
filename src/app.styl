@@ -17,10 +17,6 @@ genGrid($gridSize)
 	&#sudoku-grid
 		width $width
 		height $width
-		
-	&#input-grid
-		width $width
-		padding-left 1px * $gridSize
 
 	.grid-align:nth-child({$gridSize}n+1)
 		clear both
@@ -103,7 +99,7 @@ body
 				position absolute
 						
 			.cell-hints
-				//display none
+				display none
 				
 				.cell-hint
 					font-size 8px
@@ -121,17 +117,20 @@ body
 				.cell-hints.show-hints
 					display block
 					
-				&:hover
+				&:hover, &.selected
 					border 1px solid alpha($inputColor, 0.7)
 					background-color alpha($inputColor, 0.3)
 
 	#input-grid
+		display inline-block
 		margin-top 15px
 		color $inputColor
+		border 2px solid alpha($inputColor, 0.5)
+		
 		
 		.input
 			padding 3px
-			border 1px solid $inputColor
+			border 1px solid alpha($inputColor, 0.5)
 			transition background-color 0.2s
 			float left
 			cursor pointer
