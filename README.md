@@ -1,6 +1,6 @@
 # Uber Sudoku Challenge
 
-This is my attempt at the Uber programming challenge. 
+This is my attempt at the [Uber Sudoku coding challenge](https://nojvek.github.io/uber-sudoku).
 
 ### Features
  * It looks beautiful, I spent quite a lot of time tweaking the CSS. At one point I had a dynamically blurred background but it was too slow on mobile devices, so I had to revert.
@@ -26,17 +26,21 @@ This is my attempt at the Uber programming challenge.
  * I could probably improve the initial loading perf and make it offline capable.
  * I've been wanting to try sharejs. Multiplayer would make it social.
 
-### screenshots
+### Screenshots
 
-Desktop
+Chrome Desktop 4x4x4
 
 ![](screenshots/desktop.jpg?raw=true)
 
-iPhone
+Chrome iPhone 3x3x3
 
 ![](screenshots/iphone.jpg?raw=true)
 ![](screenshots/iphone_app.jpg?raw=true)
 
-iPad
+Chrome iPad 4x4x4
 
 ![](screenshots/ipad.jpg?raw=true)
+
+iPhone Safari 2x2x2
+
+![](screenshots/2x2.jpg?raw=true)
