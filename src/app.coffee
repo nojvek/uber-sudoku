@@ -32,7 +32,7 @@ $ ->
 		data:
 			showHints: false
 			sudoku: null
-			selectedCellIndex: null
+			selectedIndex: null
 
 		methods:
 			loop: (size) -> _.range(0, size * size)
@@ -53,12 +53,12 @@ $ ->
 			onCellClick: (index) ->
 				console.log "cellClick", index
 				if sudoku.editableMask[index]
-					@selectedCellIndex = index
+					@selectedIndex = index
 
 			onInputClick: (val) ->
 				console.log "inputClick", val
-				if @selectedCellIndex != null
-					@sudoku.grid.$set(@selectedCellIndex, val)
+				if @selectedIndex != null
+					@sudoku.grid.$set(@selectedIndex, val)
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->

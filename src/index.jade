@@ -29,10 +29,10 @@ html
 				.block.grid-align(v-repeat="numBlock: loop(sudoku.blockSize)")
 					.cell.grid-align(
 						v-repeat="numCell: loop(sudoku.blockSize)" 
-						v-class="editable: sudoku.editableMask[toIndex(numBlock, numCell)], selected: selectedCellIndex == toIndex(numBlock, numCell)"
+						v-class="editable: sudoku.editableMask[toIndex(numBlock, numCell)], selected: selectedIndex == toIndex(numBlock, numCell)"
 						v-on="click: onCellClick(toIndex(numBlock, numCell))")
 						.cell-value(v-text="sudoku.grid[toIndex(numBlock, numCell)]")
-						.cell-hints(v-class="show-hints: showHints" v-if="sudoku.editableMask[toIndex(numBlock, numCell)]")
+						.cell-hints(v-class="show-hints: showHints" v-if="sudoku.grid[toIndex(numBlock, numCell)] == ''")
 							.cell-hint.grid-align(
 								v-repeat="hint: sudoku.gridChars"
 								v-text="sudoku.hintTable[toIndex(numBlock, numCell)][hint]")
@@ -40,8 +40,8 @@ html
 			#input-grid(v-attr="class: 'center-align clearfix grid' + sudoku.blockSize")
 				.input(
 					v-repeat="sudoku.gridChars" 
-					v-text="$value"
-					v-on="click: onInputClick($value)")
+					v-text="sudoku.hintTable[selectedIndex][$value]"
+					v-on="click: onInputClick($event.currentTarget.innerText)")
 
 			.btn-bar.clearfix
 				.btn.left(v-on="click: newGame()") New Game
