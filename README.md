@@ -1,8 +1,12 @@
 # Uber Sudoku Challenge
 
-This is my attempt at the Uber Sudoku coding challenge.
+This is my ambitious attempt at the Uber Sudoku coding challenge.
 
-To play online: [https://nojvek.github.io/uber-sudoku]()
+To play online: 
+ * [https://nojvek.github.io/uber-sudoku](3x3x3 Sudoku)
+ * [https://nojvek.github.io/uber-sudoku/?size=2](2x2x2 Sudoku)
+ * [https://nojvek.github.io/uber-sudoku/?size=4](4x4x4 Sudoku)
+
 
 ### Features
  * It looks beautiful, I spent quite a lot of time tweaking the CSS. At one point I had a dynamically blurred background but it was too slow on mobile devices, so I had to revert.
