@@ -83,7 +83,7 @@ createSudokuVue = ->
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
-				$cellValues = $(".cell:not(.editable) > .cell-value")
+				$cellValues = $(".cell > .cell-value")
 				innerTexts = $.map($cellValues, (elem) -> elem.innerText)
 
 				chars = @sudoku.gridChars
@@ -211,11 +211,11 @@ class SudokuGrid
 			grid[row1 * numCells + col1] = grid[row2 * numCells + col2]
 			grid[row2 * numCells + col2] = temp
 
-		# for c in [0...constants.numSwaps] by 1
-		# 	offset = c % blockSize
-		# 	n1 = Math.floor(Math.random() * blockSize) * blockSize + offset
-		# 	n2 = Math.floor(Math.random() * blockSize) * blockSize + offset
-		# 	swap(row, n1, row, n2) for row in [0...numCells] by 1
+		for c in [0...constants.numSwaps] by 1
+			offset = c % blockSize
+			n1 = Math.floor(Math.random() * blockSize) * blockSize + offset
+			n2 = Math.floor(Math.random() * blockSize) * blockSize + offset
+			swap(row, n1, row, n2) for row in [0...numCells] by 1
 
 		for c in [0...constants.numSwaps] by 1
 			offset = (c % blockSize) * blockSize
