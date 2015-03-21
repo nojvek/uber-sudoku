@@ -81,6 +81,7 @@ createSudokuVue = ->
 					@sudoku.grid.$set(@selectedIndex, val)
 					@sudoku.updateHintGrid()
 					@gameOver = @sudoku.isGridFilled()
+					if @gameOver then @selectedIndex = null
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
