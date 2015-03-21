@@ -1,4 +1,4 @@
-var SudokuGrid, c, constants, sudoku, sudokuVue;
+var SudokuGrid, c, constants, createSudokuVue, sudoku, sudokuVue;
 
 c = console;
 
@@ -8,7 +8,7 @@ sudoku = null;
 
 constants = {
   blockSize: 3,
-  numSwaps: 42,
+  numSwaps: 10,
   numAnimFrames: 30,
   editableProbability: 0.7
 };
@@ -36,7 +36,16 @@ $(function() {
       top: (wh - ch * scale) / 2
     });
   };
-  sudokuVue = new Vue({
+  sudokuVue = createSudokuVue();
+  parseUrlVars();
+  sudokuVue.newGame();
+  sudoku = sudokuVue.sudoku;
+  $(window).on('resize', autoScaleGrid);
+  return requestAnimationFrame(autoScaleGrid);
+});
+
+createSudokuVue = function() {
+  return new Vue({
     el: "#sudoku-container",
     data: {
       showHints: false,
@@ -58,6 +67,7 @@ $(function() {
       },
       newGame: function() {
         this.sudoku = new SudokuGrid(constants.blockSize);
+        this.selectedIndex = null;
         return requestAnimationFrame(this.animateShuffle);
       },
       onCellClick: function(index) {
@@ -69,7 +79,8 @@ $(function() {
       onInputClick: function(val) {
         console.log("inputClick", val);
         if (this.selectedIndex !== null) {
-          return this.sudoku.grid.$set(this.selectedIndex, val);
+          this.sudoku.grid.$set(this.selectedIndex, val);
+          return this.sudoku.updateHintTable();
         }
       },
       animateShuffle: function() {
@@ -101,12 +112,7 @@ $(function() {
       }
     }
   });
-  parseUrlVars();
-  sudokuVue.newGame();
-  sudoku = sudokuVue.sudoku;
-  $(window).on('resize', autoScaleGrid);
-  return requestAnimationFrame(autoScaleGrid);
-});
+};
 
 
 /*
@@ -130,7 +136,7 @@ SudokuGrid = (function() {
   		For a 3x3 sudoku these are just 1...9
   		for a 4x4 sudoku they are 0...9a...f
   
-  	@hintTable
+  	@hintGrid
   		A hint table contains possible selectable options
   		It is used when showHints is pressed
   		We also trim the hints as the user makes selections
@@ -193,7 +199,7 @@ SudokuGrid = (function() {
     this.grid = this.createIdentityGrid();
     this.randomizeGrid();
     this.editableMask = this.createRandomEditableMask();
-    this.hintTable = this.createHintTable();
+    this.hintGrid = this.createHintTable();
   }
 
 
@@ -266,13 +272,35 @@ SudokuGrid = (function() {
 
 
   /*
+  	Generates a size x size input mask with the same dimensions as the grid
+   */
+
+  SudokuGrid.prototype.createRandomEditableMask = function() {
+    var editableMask, i, k, ref, val;
+    editableMask = [];
+    for (i = k = 0, ref = this.grid.length; k < ref; i = k += 1) {
+      if (Math.random() > constants.editableProbability) {
+        val = 0;
+      } else {
+        val = 1;
+      }
+      if (val === 1) {
+        this.grid[i] = "";
+      }
+      editableMask.push(val);
+    }
+    return editableMask;
+  };
+
+
+  /*
   	Create a blank hint table, inside each cell we store an hash map (object)
   	with keys as possible choices
    */
 
   SudokuGrid.prototype.createHintTable = function() {
-    var char, hintMap, hintTable, i, k, l, len1, ref, ref1;
-    hintTable = [];
+    var char, hintGrid, hintMap, i, k, l, len1, ref, ref1;
+    hintGrid = [];
     for (i = k = 0, ref = this.grid.length; k < ref; i = k += 1) {
       hintMap = {};
       if (this.editableMask[i] === 0) {
@@ -284,9 +312,9 @@ SudokuGrid = (function() {
           hintMap[char] = char;
         }
       }
-      hintTable.push(hintMap);
+      hintGrid.push(hintMap);
     }
-    return hintTable;
+    return hintGrid;
   };
 
 
@@ -298,9 +326,9 @@ SudokuGrid = (function() {
    */
 
   SudokuGrid.prototype.trimHintTable = function(row, col, index) {
-    var editableMask, hintTable, item, len, processItem, removeHint, size, trimQueue;
+    var editableMask, hintGrid, item, len, processItem, removeHint, size, trimQueue;
     c.log("sudoku.trimHintTable(", row, col, index, ")");
-    hintTable = this.hintTable;
+    hintGrid = this.hintGrid;
     editableMask = this.editableMask;
     len = this.numCells;
     size = this.blockSize;
@@ -314,7 +342,7 @@ SudokuGrid = (function() {
     removeHint = (function(_this) {
       return function(row, col, index) {
         var hintHash, hints;
-        hintHash = hintTable[row][col];
+        hintHash = hintGrid[row][col];
         if (hintHash[index]) {
           delete hintHash[index];
           hints = Object.keys(hintHash);
@@ -331,10 +359,10 @@ SudokuGrid = (function() {
     })(this);
     processItem = function(row, col, index) {
       var blockCol, blockRow, cellCol, cellRow, hintHash, i, j, k, l, m, n, ref, ref1, ref2, ref3;
-      hintHash = hintTable[row][col];
+      hintHash = hintGrid[row][col];
       if (hintHash) {
-        hintTable[row][col] = {};
-        hintTable[row][col][index] = true;
+        hintGrid[row][col] = {};
+        hintGrid[row][col][index] = true;
         for (i = k = 0, ref = len; k < ref; i = k += 1) {
           if (i !== row) {
             removeHint(i, col, index);
@@ -364,28 +392,6 @@ SudokuGrid = (function() {
       processItem(item.row, item.col, item.index);
     }
     return false;
-  };
-
-
-  /*
-  	Generates a size x size input mask with the same dimensions as the grid
-   */
-
-  SudokuGrid.prototype.createRandomEditableMask = function() {
-    var editableMask, i, k, ref, val;
-    editableMask = [];
-    for (i = k = 0, ref = this.grid.length; k < ref; i = k += 1) {
-      if (Math.random() > constants.editableProbability) {
-        val = 0;
-      } else {
-        val = 1;
-      }
-      if (val === 1) {
-        this.grid[i] = "";
-      }
-      editableMask.push(val);
-    }
-    return editableMask;
   };
 
   return SudokuGrid;
