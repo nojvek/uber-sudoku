@@ -41,7 +41,7 @@ $(function() {
     data: {
       showHints: false,
       sudoku: null,
-      selectedCellIndex: null
+      selectedIndex: null
     },
     methods: {
       loop: function(size) {
@@ -63,13 +63,13 @@ $(function() {
       onCellClick: function(index) {
         console.log("cellClick", index);
         if (sudoku.editableMask[index]) {
-          return this.selectedCellIndex = index;
+          return this.selectedIndex = index;
         }
       },
       onInputClick: function(val) {
         console.log("inputClick", val);
-        if (this.selectedCellIndex !== null) {
-          return this.sudoku.grid.$set(this.selectedCellIndex, val);
+        if (this.selectedIndex !== null) {
+          return this.sudoku.grid.$set(this.selectedIndex, val);
         }
       },
       animateShuffle: function() {
