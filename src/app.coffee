@@ -1,10 +1,12 @@
 c = console
 sudokuVue = null
+sudoku = null
 
 constants =
 	gridSize: 3
 	numSwaps: 10
 	numAnimFrames: 30
+	editableProbability: 0.7
 
 
 $ ->
@@ -38,8 +40,8 @@ $ ->
 				@sudoku = new SudokuGrid(constants.gridSize)
 				requestAnimationFrame(@animateShuffle)	
 
-			onCellClick: (numContainer, numCell) ->
-				c.log numContainer, numCell
+			onCellClick: (numBlock, numCell) ->
+				c.log numBlock, numCell
 
 			onInputClick: (numInput) ->
 				c.log numInput
@@ -72,6 +74,15 @@ $ ->
 	$(window).on('resize', autoScaleGrid)
 	requestAnimationFrame(autoScaleGrid)
 
+	
+	sudoku = sudokuVue.sudoku
+	sudoku.trimHintTable 0, 1, 2 
+	sudoku.trimHintTable 0, 2, 1 
+	sudoku.trimHintTable 1, 0, 0 
+	sudoku.trimHintTable 2, 1, 0 
+	#sudoku.trimHintTable 3, 2, 2
+	sudokuVue.sudoku = null; sudokuVue.sudoku = sudoku
+	
 
 
 ###
@@ -126,9 +137,7 @@ class SudokuGrid
 		@grid = @createEmptyGrid()
 		@inputMask = @createRandomInputMask()
 		@hintTable = @createHintTable()
-		#@grid = @identity()
-		#@shuffleGrid()
-		@applyInputMask()
+		#@applyInputMask()
 
 
 	###
@@ -160,7 +169,7 @@ class SudokuGrid
 		return @grid
 
 	###
-	Randomize by swapping rows and columns between a cell-container
+	Randomize by swapping rows and columns between a block
 	We aren't currently using this method is it doesn't truly randomize the grid
 	###
 	shuffleGrid: ->
@@ -235,46 +244,59 @@ class SudokuGrid
 
 	###
 	Remove all other values apart from the passed value for the cell
-	Trim other cells by row, col and container
+	Trim other cells by row, col and block
 	If in the process of trimming we encounter a naked singlet
 	then we add it to a queue and trim it in a another pass
 	###
 	trimHintTable: (row, col, index) ->
+		c.log "sudoku.trimHintTable(", row, col, index, ")"
 		hintTable = @hintTable
 		inputMask = @inputMask
 		len = @gridLen
 		size = @gridSize
+		trimQueue = [{row: row, col: col, index: index}]
 
 		removeHint = (row, col, index) =>
 			hintHash = hintTable[row][col]
-			delete hintHash[index]
-			hints = Object.keys(hintHash)
-			if hints.length == 1 and @inputMask[row][col] == 1
-				c.log "orphan", row, col, hints[0]
-				@trimHintTable(row, col, hints[0])
+			if hintHash[index]
+				delete hintHash[index]
+				hints = Object.keys(hintHash)
+				if hints.length == 1
+					c.log "orphan", row, col, hints
+					trimQueue.push(row: row, col: col, index: hints[0])
 
 			return
 
-		hintHash = hintTable[row][col]
-		if hintHash
-			for i in [0...len] by 1
-				removeHint(i, col, index)
+		processItem = (row, col, index) ->
+			hintHash = hintTable[row][col]
+			if hintHash
+				hintTable[row][col] = {}
+				hintTable[row][col][index] = true
 
-			for j in [0...len] by 1
-				removeHint(row, j, index)
+				for i in [0...len] by 1
+					if i != row
+						removeHint(i, col, index)
 
-			containerRow = Math.floor(row/size)
-			containerCol = Math.floor(col/size)
+				for j in [0...len] by 1
+					if j != col
+						removeHint(row, j, index)
 
-			for i in [0...size] by 1
-				for j in [0...size] by 1
-					removeHint(i, j, index)
+				blockRow = Math.floor(row/size) * size
+				blockCol = Math.floor(col/size) * size
 
-			for key in Object.keys(hintHash)
-				delete hintHash[key]
+				for i in [0...size] by 1
+					cellRow = blockRow + i
+					for j in [0...size] by 1
+						cellCol = blockCol + j
+						if cellCol != row and cellCol!= col
+							removeHint(blockRow + i, blockCol + j, index)
 
-			hintTable[row][col][index] = true
-			return true
+				return true
+
+		while trimQueue.length > 0
+			item = trimQueue.shift()
+			processItem(item.row, item.col, item.index)
+
 
 		return false
 
@@ -289,7 +311,7 @@ class SudokuGrid
 		for i in [0...len] by 1
 			row = []
 			for j in [0...len] by 1
-				if Math.random() > 0.5 then val = 0 else val = 1
+				if Math.random() > constants.editableProbability then val = 0 else val = 1
 				row.push(val)
 			inputMask.push(row)
 		
@@ -310,32 +332,33 @@ class SudokuGrid
 					hints = Object.keys(@hintTable[i][j])
 					randomHint = _.sample(hints)
 					@grid[i][j] = randomHint
-					@trimHintTable(i, j, randomHint)
+					if hints.length > 1
+						@trimHintTable(i, j, randomHint)
 
 		return @inputMask
 
 	###
 	Coordinate and self explanatory access functions below
 	###
-	rowColFromCell: (numContainer, numCell) ->
+	rowColFromCell: (numBlock, numCell) ->
 		size = @gridSize
-		col = numContainer % size
-		row = Math.floor(numContainer / size)
+		col = numBlock % size
+		row = Math.floor(numBlock / size)
 		col = col * size + numCell % size
 		row = row * size + Math.floor(numCell / size)
 		return row:row, col:col
 
-	charAt: (numContainer, numCell) ->
-		coords = @rowColFromCell(numContainer, numCell)
+	charAt: (numBlock, numCell) ->
+		coords = @rowColFromCell(numBlock, numCell)
 		val = @grid[coords.row][coords.col]
 		return if val != null then @gridChars[val] else ""
 
-	hintAt: (numContainer, numCell, index) ->
-		coords = @rowColFromCell(numContainer, numCell)
+	hintAt: (numBlock, numCell, index) ->
+		coords = @rowColFromCell(numBlock, numCell)
 		hints = @hintTable[coords.row][coords.col]
 		return if hints[index] then @gridChars[index] else ""
 
-	isEditable: (numContainer, numCell) ->
-		coords = @rowColFromCell(numContainer, numCell)
+	isEditable: (numBlock, numCell) ->
+		coords = @rowColFromCell(numBlock, numCell)
 		return @inputMask[coords.row][coords.col] == 1
 

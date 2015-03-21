@@ -118,7 +118,7 @@ body {
 #sudoku-container #sudoku-grid .grid-align {
   float: left;
 }
-#sudoku-container #sudoku-grid .cell-container,
+#sudoku-container #sudoku-grid .block,
 #sudoku-container #sudoku-grid .cell {
   border: 1px solid rgba(255,255,255,0.3);
 }

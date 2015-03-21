@@ -25,18 +25,17 @@ html
 		#sudoku-container
 			.bg
 			h1.title Uber Sudoku
-			#sudoku-grid(v-attr="class: 'center-align grid' + sudoku.gridSize")
-				.cell-grid.clearfix
-					.cell-container.grid-align(v-repeat="numContainer: loop(sudoku.gridSize)")
-						.cell.grid-align(
-							v-repeat="numCell: loop(sudoku.gridSize)" 
-							v-class="editable: sudoku.isEditable(numContainer, numCell)"
-							v-on="click: onCellClick(numContainer, numCell)")
-							.cell-value(v-text="sudoku.charAt(numContainer, numCell)")
-							.cell-hints(v-class="show-hints: showHints")
-								.cell-hint.grid-align(
-									v-repeat="numHint: loop(sudoku.gridSize)" 
-									v-text="sudoku.hintAt(numContainer, numCell, numHint)")
+			#sudoku-grid(v-attr="class: 'clearfix center-align grid' + sudoku.gridSize")
+				.block.grid-align(v-repeat="numBlock: loop(sudoku.gridSize)")
+					.cell.grid-align(
+						v-repeat="numCell: loop(sudoku.gridSize)" 
+						v-class="editable: sudoku.isEditable(numBlock, numCell)"
+						v-on="click: onCellClick(numBlock, numCell)")
+						.cell-value(v-text="sudoku.charAt(numBlock, numCell)")
+						.cell-hints(v-class="show-hints: showHints")
+							.cell-hint.grid-align(
+								v-repeat="numHint: loop(sudoku.gridSize)" 
+								v-text="sudoku.hintAt(numBlock, numCell, numHint)")
 
 			#input-grid(v-attr="class: 'center-align clearfix grid' + sudoku.gridSize")
 				.input(
