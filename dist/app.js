@@ -390,7 +390,7 @@ SudokuGrid = (function() {
         blockCol = Math.floor(col / blockSize) * blockSize;
         for (i = m = 0, ref2 = blockSize; m < ref2; i = m += 1) {
           for (j = n = 0, ref3 = blockSize; n < ref3; j = n += 1) {
-            results[grid[(i + blockRow) * numCells + col + blockCol]] = true;
+            results[grid[(i + blockRow) * numCells + j + blockCol]] = true;
           }
         }
         return results;

@@ -302,7 +302,7 @@ class SudokuGrid
 
 			for i in [0...blockSize] by 1
 				for j in [0...blockSize] by 1
-					results[grid[(i + blockRow) * numCells + col + blockCol]] = true
+					results[grid[(i + blockRow) * numCells + j + blockCol]] = true
 
 			return results
 
