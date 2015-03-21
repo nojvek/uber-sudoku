@@ -111,11 +111,11 @@ body {
 }
 #sudoku-container #sudoku-grid .block.game-over,
 #sudoku-container #sudoku-grid .block.game-over .cell {
-  -webkit-animation: 1s spin infinite;
-  -moz-animation: 1s spin infinite;
-  -o-animation: 1s spin infinite;
-  -ms-animation: 1s spin infinite;
-  animation: 1s spin infinite;
+  -webkit-animation: 0.7s spin infinite;
+  -moz-animation: 0.7s spin infinite;
+  -o-animation: 0.7s spin infinite;
+  -ms-animation: 0.7s spin infinite;
+  animation: 0.7s spin infinite;
 }
 #sudoku-container #sudoku-grid .block .cell {
   -webkit-box-sizing: content-box;

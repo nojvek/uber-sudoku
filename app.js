@@ -79,7 +79,10 @@ createSudokuVue = function() {
         if (this.selectedIndex !== null) {
           this.sudoku.grid.$set(this.selectedIndex, val);
           this.sudoku.updateHintGrid();
-          return this.gameOver = this.sudoku.isGridFilled();
+          this.gameOver = this.sudoku.isGridFilled();
+          if (this.gameOver) {
+            return this.selectedIndex = null;
+          }
         }
       },
       animateShuffle: function() {
