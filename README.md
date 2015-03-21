@@ -33,6 +33,7 @@ Desktop
 iPhone
 
 ![](assets/screenshots/iphone.jpg?raw=true)
+![](assets/screenshots/iphone_app.jpg?raw=true)
 
 iPad
 
