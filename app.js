@@ -1,13 +1,16 @@
-var SudokuGrid, c, constants, sudokuVue;
+var SudokuGrid, c, constants, sudoku, sudokuVue;
 
 c = console;
 
 sudokuVue = null;
 
+sudoku = null;
+
 constants = {
   gridSize: 3,
   numSwaps: 10,
-  numAnimFrames: 30
+  numAnimFrames: 30,
+  editableProbability: 0.7
 };
 
 $(function() {
@@ -48,8 +51,8 @@ $(function() {
         this.sudoku = new SudokuGrid(constants.gridSize);
         return requestAnimationFrame(this.animateShuffle);
       },
-      onCellClick: function(numContainer, numCell) {
-        return c.log(numContainer, numCell);
+      onCellClick: function(numBlock, numCell) {
+        return c.log(numBlock, numCell);
       },
       onInputClick: function(numInput) {
         return c.log(numInput);
@@ -86,7 +89,14 @@ $(function() {
   parseUrlVars();
   sudokuVue.newGame();
   $(window).on('resize', autoScaleGrid);
-  return requestAnimationFrame(autoScaleGrid);
+  requestAnimationFrame(autoScaleGrid);
+  sudoku = sudokuVue.sudoku;
+  sudoku.trimHintTable(0, 1, 2);
+  sudoku.trimHintTable(0, 2, 1);
+  sudoku.trimHintTable(1, 0, 0);
+  sudoku.trimHintTable(2, 1, 0);
+  sudokuVue.sudoku = null;
+  return sudokuVue.sudoku = sudoku;
 });
 
 
@@ -185,7 +195,6 @@ SudokuGrid = (function() {
     this.grid = this.createEmptyGrid();
     this.inputMask = this.createRandomInputMask();
     this.hintTable = this.createHintTable();
-    this.applyInputMask();
   }
 
 
@@ -222,7 +231,7 @@ SudokuGrid = (function() {
 
 
   /*
-  	Randomize by swapping rows and columns between a cell-container
+  	Randomize by swapping rows and columns between a block
   	We aren't currently using this method is it doesn't truly randomize the grid
    */
 
@@ -314,51 +323,76 @@ SudokuGrid = (function() {
 
   /*
   	Remove all other values apart from the passed value for the cell
-  	Trim other cells by row, col and container
+  	Trim other cells by row, col and block
   	If in the process of trimming we encounter a naked singlet
   	then we add it to a queue and trim it in a another pass
    */
 
   SudokuGrid.prototype.trimHintTable = function(row, col, index) {
-    var containerCol, containerRow, hintHash, hintTable, i, inputMask, j, key, l, len, len1, m, n, o, p, ref, ref1, ref2, ref3, ref4, removeHint, size;
+    var hintTable, inputMask, item, len, processItem, removeHint, size, trimQueue;
+    c.log("sudoku.trimHintTable(", row, col, index, ")");
     hintTable = this.hintTable;
     inputMask = this.inputMask;
     len = this.gridLen;
     size = this.gridSize;
+    trimQueue = [
+      {
+        row: row,
+        col: col,
+        index: index
+      }
+    ];
     removeHint = (function(_this) {
       return function(row, col, index) {
         var hintHash, hints;
         hintHash = hintTable[row][col];
-        delete hintHash[index];
-        hints = Object.keys(hintHash);
-        if (hints.length === 1 && _this.inputMask[row][col] === 1) {
-          c.log("orphan", row, col, hints[0]);
-          _this.trimHintTable(row, col, hints[0]);
+        if (hintHash[index]) {
+          delete hintHash[index];
+          hints = Object.keys(hintHash);
+          if (hints.length === 1) {
+            c.log("orphan", row, col, hints);
+            trimQueue.push({
+              row: row,
+              col: col,
+              index: hints[0]
+            });
+          }
         }
       };
     })(this);
-    hintHash = hintTable[row][col];
-    if (hintHash) {
-      for (i = l = 0, ref = len; l < ref; i = l += 1) {
-        removeHint(i, col, index);
-      }
-      for (j = m = 0, ref1 = len; m < ref1; j = m += 1) {
-        removeHint(row, j, index);
-      }
-      containerRow = Math.floor(row / size);
-      containerCol = Math.floor(col / size);
-      for (i = n = 0, ref2 = size; n < ref2; i = n += 1) {
-        for (j = o = 0, ref3 = size; o < ref3; j = o += 1) {
-          removeHint(i, j, index);
+    processItem = function(row, col, index) {
+      var blockCol, blockRow, cellCol, cellRow, hintHash, i, j, l, m, n, o, ref, ref1, ref2, ref3;
+      hintHash = hintTable[row][col];
+      if (hintHash) {
+        hintTable[row][col] = {};
+        hintTable[row][col][index] = true;
+        for (i = l = 0, ref = len; l < ref; i = l += 1) {
+          if (i !== row) {
+            removeHint(i, col, index);
+          }
         }
+        for (j = m = 0, ref1 = len; m < ref1; j = m += 1) {
+          if (j !== col) {
+            removeHint(row, j, index);
+          }
+        }
+        blockRow = Math.floor(row / size) * size;
+        blockCol = Math.floor(col / size) * size;
+        for (i = n = 0, ref2 = size; n < ref2; i = n += 1) {
+          cellRow = blockRow + i;
+          for (j = o = 0, ref3 = size; o < ref3; j = o += 1) {
+            cellCol = blockCol + j;
+            if (cellCol !== row && cellCol !== col) {
+              removeHint(blockRow + i, blockCol + j, index);
+            }
+          }
+        }
+        return true;
       }
-      ref4 = Object.keys(hintHash);
-      for (p = 0, len1 = ref4.length; p < len1; p++) {
-        key = ref4[p];
-        delete hintHash[key];
-      }
-      hintTable[row][col][index] = true;
-      return true;
+    };
+    while (trimQueue.length > 0) {
+      item = trimQueue.shift();
+      processItem(item.row, item.col, item.index);
     }
     return false;
   };
@@ -375,7 +409,7 @@ SudokuGrid = (function() {
     for (i = l = 0, ref = len; l < ref; i = l += 1) {
       row = [];
       for (j = m = 0, ref1 = len; m < ref1; j = m += 1) {
-        if (Math.random() > 0.5) {
+        if (Math.random() > constants.editableProbability) {
           val = 0;
         } else {
           val = 1;
@@ -405,7 +439,9 @@ SudokuGrid = (function() {
           hints = Object.keys(this.hintTable[i][j]);
           randomHint = _.sample(hints);
           this.grid[i][j] = randomHint;
-          this.trimHintTable(i, j, randomHint);
+          if (hints.length > 1) {
+            this.trimHintTable(i, j, randomHint);
+          }
         }
       }
     }
@@ -417,11 +453,11 @@ SudokuGrid = (function() {
   	Coordinate and self explanatory access functions below
    */
 
-  SudokuGrid.prototype.rowColFromCell = function(numContainer, numCell) {
+  SudokuGrid.prototype.rowColFromCell = function(numBlock, numCell) {
     var col, row, size;
     size = this.gridSize;
-    col = numContainer % size;
-    row = Math.floor(numContainer / size);
+    col = numBlock % size;
+    row = Math.floor(numBlock / size);
     col = col * size + numCell % size;
     row = row * size + Math.floor(numCell / size);
     return {
@@ -430,9 +466,9 @@ SudokuGrid = (function() {
     };
   };
 
-  SudokuGrid.prototype.charAt = function(numContainer, numCell) {
+  SudokuGrid.prototype.charAt = function(numBlock, numCell) {
     var coords, val;
-    coords = this.rowColFromCell(numContainer, numCell);
+    coords = this.rowColFromCell(numBlock, numCell);
     val = this.grid[coords.row][coords.col];
     if (val !== null) {
       return this.gridChars[val];
@@ -441,9 +477,9 @@ SudokuGrid = (function() {
     }
   };
 
-  SudokuGrid.prototype.hintAt = function(numContainer, numCell, index) {
+  SudokuGrid.prototype.hintAt = function(numBlock, numCell, index) {
     var coords, hints;
-    coords = this.rowColFromCell(numContainer, numCell);
+    coords = this.rowColFromCell(numBlock, numCell);
     hints = this.hintTable[coords.row][coords.col];
     if (hints[index]) {
       return this.gridChars[index];
@@ -452,9 +488,9 @@ SudokuGrid = (function() {
     }
   };
 
-  SudokuGrid.prototype.isEditable = function(numContainer, numCell) {
+  SudokuGrid.prototype.isEditable = function(numBlock, numCell) {
     var coords;
-    coords = this.rowColFromCell(numContainer, numCell);
+    coords = this.rowColFromCell(numBlock, numCell);
     return this.inputMask[coords.row][coords.col] === 1;
   };
 
