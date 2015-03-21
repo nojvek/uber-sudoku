@@ -21,9 +21,9 @@
   </head>
   <body>
     <div id="sudoku-container">
-      <h1 class="title">Uber Sudoku</h1>
+      <h1 v-text="gameOver ? 'wooo hooo!!' : 'Uber Sudoku'" class="title"></h1>
       <div id="sudoku-grid" v-attr="class: 'clearfix center-align grid' + sudoku.blockSize">
-        <div v-repeat="numBlock: loop(sudoku.blockSize)" class="block grid-align">
+        <div v-repeat="numBlock: loop(sudoku.blockSize)" v-class="game-over: gameOver" class="block grid-align">
           <div v-repeat="numCell: loop(sudoku.blockSize)" v-class="editable: sudoku.editableMask[toIndex(numBlock, numCell)], selected: selectedIndex == toIndex(numBlock, numCell)" v-on="click: onCellClick(toIndex(numBlock, numCell))" class="cell grid-align">
             <div v-text="sudoku.grid[toIndex(numBlock, numCell)]" class="cell-value"></div>
             <div v-class="show-hints: showHints" v-if="sudoku.grid[toIndex(numBlock, numCell)] == ''" class="cell-hints">

@@ -97,7 +97,7 @@ body {
   letter-spacing: 8px;
 }
 #sudoku-container #sudoku-grid {
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255,255,255,0.5);
   text-align: center;
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
@@ -106,48 +106,56 @@ body {
 #sudoku-container #sudoku-grid .grid-align {
   float: left;
 }
-#sudoku-container #sudoku-grid .block,
-#sudoku-container #sudoku-grid .cell {
-  border: 1px solid rgba(255,255,255,0.3);
+#sudoku-container #sudoku-grid .block {
+  border: 1px solid rgba(255,255,255,0.5);
 }
-#sudoku-container #sudoku-grid .cell {
+#sudoku-container #sudoku-grid .block.game-over,
+#sudoku-container #sudoku-grid .block.game-over .cell {
+  -webkit-animation: 1s spin infinite;
+  -moz-animation: 1s spin infinite;
+  -o-animation: 1s spin infinite;
+  -ms-animation: 1s spin infinite;
+  animation: 1s spin infinite;
+}
+#sudoku-container #sudoku-grid .block .cell {
   -webkit-box-sizing: content-box;
   -moz-box-sizing: content-box;
   box-sizing: content-box;
   background: rgba(255,255,255,0.1);
   padding: 3px;
   position: relative;
+  border: 1px solid rgba(255,255,255,0.3);
   -webkit-transition: background-color 0.2s;
   -moz-transition: background-color 0.2s;
   -o-transition: background-color 0.2s;
   -ms-transition: background-color 0.2s;
   transition: background-color 0.2s;
 }
-#sudoku-container #sudoku-grid .cell .cell-value {
+#sudoku-container #sudoku-grid .block .cell .cell-value {
   position: absolute;
 }
-#sudoku-container #sudoku-grid .cell .cell-hints {
+#sudoku-container #sudoku-grid .block .cell .cell-hints {
   display: none;
 }
-#sudoku-container #sudoku-grid .cell .cell-hints .cell-hint {
+#sudoku-container #sudoku-grid .block .cell .cell-hints .cell-hint {
   font-size: 8px;
   height: 10px;
   width: 10px;
   line-height: 10px;
 }
-#sudoku-container #sudoku-grid .cell.editable {
+#sudoku-container #sudoku-grid .block .cell.editable {
   cursor: pointer;
   background: none;
 }
-#sudoku-container #sudoku-grid .cell.editable .cell-value,
-#sudoku-container #sudoku-grid .cell.editable .cell-hints {
+#sudoku-container #sudoku-grid .block .cell.editable .cell-value,
+#sudoku-container #sudoku-grid .block .cell.editable .cell-hints {
   color: rgba(255,255,0,0.7);
 }
-#sudoku-container #sudoku-grid .cell.editable .cell-hints.show-hints {
+#sudoku-container #sudoku-grid .block .cell.editable .cell-hints.show-hints {
   display: block;
 }
-#sudoku-container #sudoku-grid .cell.editable:hover,
-#sudoku-container #sudoku-grid .cell.editable.selected {
+#sudoku-container #sudoku-grid .block .cell.editable:hover,
+#sudoku-container #sudoku-grid .block .cell.editable.selected {
   border: 1px solid rgba(255,255,0,0.7);
   background-color: rgba(255,255,0,0.3);
 }
@@ -204,4 +212,68 @@ body {
 }
 #sudoku-container .btn-bar .btn.right {
   float: right;
+}
+@-moz-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-o-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
