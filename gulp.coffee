@@ -32,22 +32,22 @@ handle = (stream) ->
 	return stream
 
 gulp.task 'jade', ->
-	gulp.src 'src/*.jade'
+	gulp.src 'src/**/*.jade'
 	.pipe handle(jade(pretty: true))
 	.pipe gulp.dest buildDir
 
 gulp.task 'styl', ->
-	gulp.src 'src/*.styl'
+	gulp.src 'src/**/*.styl'
 	.pipe handle(stylus(use: nib()))
 	.pipe gulp.dest buildDir
 
 gulp.task 'coffee', ->
-	gulp.src 'src/*.coffee'
+	gulp.src 'src/**/*.coffee'
 	.pipe handle(coffee(bare: true))
 	.pipe gulp.dest buildDir
 
 gulp.task 'assets', ->
-	gulp.src 'src/assets/*'
+	gulp.src 'src/assets/**'
 	.pipe gulp.dest buildDir + "/assets"
 
 
@@ -61,10 +61,10 @@ gulp.task 'server',  ->
 	app.listen serverPort
 
 gulp.task 'watch', ['server'], ->
-	gulp.watch 'src/*.jade', ['jade']
-	gulp.watch 'src/*.coffee', ['coffee']
-	gulp.watch 'src/*.styl', ['styl']
-	gulp.watch 'src/assets/*', ['assets']
+	gulp.watch 'src/**/*.jade', ['jade']
+	gulp.watch 'src/**/*.coffee', ['coffee']
+	gulp.watch 'src/**/*.styl', ['styl']
+	gulp.watch 'src/assets/**', ['assets']
 	gulp.watch(buildDir + '/*').on('change', (e) -> livereload.changed(e.path))
 	livereload.listen()
 

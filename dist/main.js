@@ -7,6 +7,4 @@ require.config({
   }
 });
 
-define(["jquery", "lodash", "vue"], function($, _, Vue) {
-  return console.log("require called", arguments);
-});
+require(["app"]);
