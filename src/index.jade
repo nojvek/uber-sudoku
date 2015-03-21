@@ -23,7 +23,6 @@ html
 
 	body
 		#sudoku-container
-			.bg
 			h1.title Uber Sudoku
 			#sudoku-grid(v-attr="class: 'clearfix center-align grid' + sudoku.blockSize")
 				.block.grid-align(v-repeat="numBlock: loop(sudoku.blockSize)")
@@ -35,12 +34,12 @@ html
 						.cell-hints(v-class="show-hints: showHints" v-if="sudoku.grid[toIndex(numBlock, numCell)] == ''")
 							.cell-hint.grid-align(
 								v-repeat="hint: sudoku.gridChars"
-								v-text="sudoku.hintTable[toIndex(numBlock, numCell)][hint]")
+								v-text="sudoku.hintGrid[toIndex(numBlock, numCell)][hint]")
 
 			#input-grid(v-attr="class: 'center-align clearfix grid' + sudoku.blockSize")
 				.input(
 					v-repeat="sudoku.gridChars" 
-					v-text="sudoku.hintTable[selectedIndex][$value]"
+					v-text="sudoku.hintGrid[selectedIndex][$value]"
 					v-on="click: onInputClick($event.currentTarget.innerText)")
 
 			.btn-bar.clearfix

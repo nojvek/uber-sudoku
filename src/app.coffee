@@ -4,10 +4,9 @@ sudoku = null
 
 constants =
 	blockSize: 3
-	numSwaps: 42
+	numSwaps: 10
 	numAnimFrames: 30
 	editableProbability: 0.7
-
 
 $ ->
 	# If size url param is present then we change the grid size accordingly
@@ -16,6 +15,8 @@ $ ->
 		if queryMatch and (queryMatch[1] == "2" or queryMatch[1] == "4")
 			constants.blockSize = parseInt(queryMatch[1])
 
+	# scale the sudoku container so it fits within the viewport vertically centered
+	# if it is landscape view then the leaf background will show on the right
 	autoScaleGrid = ->
 		$container = $("#sudoku-container")
 		$window = $(window)
@@ -26,8 +27,24 @@ $ ->
 		scale = Math.min(ww/cw, wh/ch)
 		$container.css(transform: "scale(" + scale + ")", top: (wh - ch * scale)/2)
 
-	
-	sudokuVue = new Vue
+
+	# This acts as our main method
+	sudokuVue = createSudokuVue()
+	parseUrlVars()
+	sudokuVue.newGame()
+	sudoku = sudokuVue.sudoku #for debugging
+
+	$(window).on('resize', autoScaleGrid)
+	requestAnimationFrame(autoScaleGrid)
+
+
+# We are using a small library called vue that handles the view model binding.
+# We could have done it all with jquery but that would involve too spagetti code.
+# Vue works really well with coffeescript and jade syntax.
+# Uber said not to use backbone, so I'm iffy whether they'll approve of this.
+# I think its very simple, elegant and descriptive code.
+createSudokuVue = ->
+	return new Vue
 		el: "#sudoku-container"
 		data:
 			showHints: false
@@ -47,8 +64,8 @@ $ ->
 
 			newGame: ->
 				@sudoku = new SudokuGrid(constants.blockSize)
+				@selectedIndex = null
 				requestAnimationFrame(@animateShuffle)
-
 
 			onCellClick: (index) ->
 				console.log "cellClick", index
@@ -59,6 +76,7 @@ $ ->
 				console.log "inputClick", val
 				if @selectedIndex != null
 					@sudoku.grid.$set(@selectedIndex, val)
+					@sudoku.updateHintTable()
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
@@ -81,15 +99,6 @@ $ ->
 
 				requestAnimationFrame(renderFrame)
 
-
-	parseUrlVars()
-	sudokuVue.newGame()
-	sudoku = sudokuVue.sudoku #for debugging
-
-	$(window).on('resize', autoScaleGrid)
-	requestAnimationFrame(autoScaleGrid)
-
-
 ###
 SudokuGrid contains functions for grid generation, validation and hinting
 ###
@@ -109,7 +118,7 @@ class SudokuGrid
 		For a 3x3 sudoku these are just 1...9
 		for a 4x4 sudoku they are 0...9a...f
 
-	@hintTable
+	@hintGrid
 		A hint table contains possible selectable options
 		It is used when showHints is pressed
 		We also trim the hints as the user makes selections
@@ -138,8 +147,7 @@ class SudokuGrid
 		@grid = @createIdentityGrid()
 		@randomizeGrid()
 		@editableMask = @createRandomEditableMask()
-		@hintTable = @createHintTable()
-		#@applyInputMask()
+		@hintGrid = @createHintTable()
 
 
 	###
@@ -215,11 +223,24 @@ class SudokuGrid
 
 
 	###
+	Generates a size x size input mask with the same dimensions as the grid
+	###
+	createRandomEditableMask: ->
+		editableMask = []
+
+		for i in [0...@grid.length] by 1
+			if Math.random() > constants.editableProbability then val = 0 else val = 1
+			if val == 1 then @grid[i] = ""	
+			editableMask.push(val)
+		return editableMask
+
+
+	###
 	Create a blank hint table, inside each cell we store an hash map (object)
 	with keys as possible choices
 	###
 	createHintTable: ->
-		hintTable = []
+		hintGrid = []
 		for i in [0...@grid.length] by 1
 			hintMap = {}
 			if @editableMask[i] == 0
@@ -227,8 +248,8 @@ class SudokuGrid
 			else 
 				for char in @gridChars
 					hintMap[char] = char
-			hintTable.push(hintMap)
-		return hintTable
+			hintGrid.push(hintMap)
+		return hintGrid
 
 	###
 	Remove all other values apart from the passed value for the cell
@@ -238,14 +259,14 @@ class SudokuGrid
 	###
 	trimHintTable: (row, col, index) ->
 		c.log "sudoku.trimHintTable(", row, col, index, ")"
-		hintTable = @hintTable
+		hintGrid = @hintGrid
 		editableMask = @editableMask
 		len = @numCells
 		size = @blockSize
 		trimQueue = [{row: row, col: col, index: index}]
 
 		removeHint = (row, col, index) =>
-			hintHash = hintTable[row][col]
+			hintHash = hintGrid[row][col]
 			if hintHash[index]
 				delete hintHash[index]
 				hints = Object.keys(hintHash)
@@ -256,10 +277,10 @@ class SudokuGrid
 			return
 
 		processItem = (row, col, index) ->
-			hintHash = hintTable[row][col]
+			hintHash = hintGrid[row][col]
 			if hintHash
-				hintTable[row][col] = {}
-				hintTable[row][col][index] = true
+				hintGrid[row][col] = {}
+				hintGrid[row][col][index] = true
 
 				for i in [0...len] by 1
 					if i != row
@@ -287,18 +308,3 @@ class SudokuGrid
 
 
 		return false
-
-
-	###
-	Generates a size x size input mask with the same dimensions as the grid
-	###
-	createRandomEditableMask: ->
-		editableMask = []
-
-		for i in [0...@grid.length] by 1
-			if Math.random() > constants.editableProbability then val = 0 else val = 1
-			if val == 1 then @grid[i] = ""	
-			editableMask.push(val)
-		return editableMask
-
-

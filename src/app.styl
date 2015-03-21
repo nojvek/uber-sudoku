@@ -156,10 +156,11 @@ body
 			background-color $bgColor
 			cursor pointer
 			transition background-color 0.2s
-			
-			&:hover, &.selected
-				background-color alpha($bgColor, 0.3)
-			
+				
+			&.selected
+				border 1px solid alpha($inputColor, 0.7)
+				background-color alpha($inputColor, 0.3)
+				
 			&.left
 				float left
 			&.right

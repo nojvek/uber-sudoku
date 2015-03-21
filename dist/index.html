@@ -21,20 +21,19 @@
   </head>
   <body>
     <div id="sudoku-container">
-      <div class="bg"></div>
       <h1 class="title">Uber Sudoku</h1>
       <div id="sudoku-grid" v-attr="class: 'clearfix center-align grid' + sudoku.blockSize">
         <div v-repeat="numBlock: loop(sudoku.blockSize)" class="block grid-align">
           <div v-repeat="numCell: loop(sudoku.blockSize)" v-class="editable: sudoku.editableMask[toIndex(numBlock, numCell)], selected: selectedIndex == toIndex(numBlock, numCell)" v-on="click: onCellClick(toIndex(numBlock, numCell))" class="cell grid-align">
             <div v-text="sudoku.grid[toIndex(numBlock, numCell)]" class="cell-value"></div>
             <div v-class="show-hints: showHints" v-if="sudoku.grid[toIndex(numBlock, numCell)] == ''" class="cell-hints">
-              <div v-repeat="hint: sudoku.gridChars" v-text="sudoku.hintTable[toIndex(numBlock, numCell)][hint]" class="cell-hint grid-align"></div>
+              <div v-repeat="hint: sudoku.gridChars" v-text="sudoku.hintGrid[toIndex(numBlock, numCell)][hint]" class="cell-hint grid-align"></div>
             </div>
           </div>
         </div>
       </div>
       <div id="input-grid" v-attr="class: 'center-align clearfix grid' + sudoku.blockSize">
-        <div v-repeat="sudoku.gridChars" v-text="sudoku.hintTable[selectedIndex][$value]" v-on="click: onInputClick($event.currentTarget.innerText)" class="input"></div>
+        <div v-repeat="sudoku.gridChars" v-text="sudoku.hintGrid[selectedIndex][$value]" v-on="click: onInputClick($event.currentTarget.innerText)" class="input"></div>
       </div>
       <div class="btn-bar clearfix">
         <div v-on="click: newGame()" class="btn left">New Game</div>

@@ -195,9 +195,9 @@ body {
   -ms-transition: background-color 0.2s;
   transition: background-color 0.2s;
 }
-#sudoku-container .btn-bar .btn:hover,
 #sudoku-container .btn-bar .btn.selected {
-  background-color: rgba(255,255,255,0.3);
+  border: 1px solid rgba(255,255,0,0.7);
+  background-color: rgba(255,255,0,0.3);
 }
 #sudoku-container .btn-bar .btn.left {
   float: left;
