@@ -16,8 +16,9 @@ To play online:
  * Tiny numbers are shown in the cells when "Show hints" is pressed.
  * Input are at the bottom show what values are possible. I wanted to make something that augments the user. No one likes red error boxes. 
  * When a new grid is generated, we run a little one second animation.
+ * When the user finishes the sudoku, we spin the blocks and do a happy animation. <sub>This was my wife's idea.</sub>
  * Tested with iphone 5s, ipad 3, Chrome latest, IE11, and Samsung S3.
- * My friends think I should actually turn it into an app. They love it. There are some bugs that they've complained about that I'll resolve soon.
+ * My friends think I should actually turn it into an app. They love it.
 
 ### Technologies
  * I used indentation languages such as **jade**, **stylus** and **coffeescript** for my html, css and javascript. With stylus mixins, I have pre-generated grids for 2x2x2, 3x3x3 and 4x4x4. Coffee is my favourite language to prototype with. Its very expressive.
@@ -28,7 +29,7 @@ To play online:
 
 ### What can be improved?
  * Tests. I was planning to use jasmine and integrate the tests with watch task, however I didn't get enough time.
- * Finish game animation. I wanted to use a css-3d animation makes the cells dance when complete. 
+ * ~~Finish game animation.~~ <sub>Wifey really insisted that I need to add a happy animation at the end</sub>
  * I could probably improve the initial loading perf and make it offline capable.
  * I've been wanting to try sharejs. Multiplayer would make it social.
 

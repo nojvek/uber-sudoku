@@ -76,7 +76,7 @@ body
 		letter-spacing 8px
 		
 	#sudoku-grid
-		border 2px solid $borderColor
+		border 2px solid alpha($borderColor, 0.5)
 		text-align center
 		box-sizing content-box
 		
@@ -85,41 +85,45 @@ body
 		.grid-align
 			float left
 		
-		.block, .cell
-			border 1px solid $borderColor
+		.block
+			border 1px solid alpha($borderColor, 0.5)
 			
-		.cell
-			box-sizing content-box
-			background $bgColor
-			padding 3px
-			position relative
-			transition background-color 0.2s
+			&.game-over, &.game-over .cell
+				animation 1s spin infinite
 						
-			.cell-value
-				position absolute
-						
-			.cell-hints
-				display none
-				
-				.cell-hint
-					font-size 8px
-					height 10px
-					width 10px
-					line-height 10px
-		
-			&.editable
-				cursor pointer
-				background none
-				
-				.cell-value, .cell-hints
-					color $inputColor
-				
-				.cell-hints.show-hints
-					display block
+			.cell
+				box-sizing content-box
+				background $bgColor
+				padding 3px
+				position relative
+				border 1px solid $borderColor
+				transition background-color 0.2s
+							
+				.cell-value
+					position absolute
+							
+				.cell-hints
+					display none
 					
-				&:hover, &.selected
-					border 1px solid alpha($inputColor, 0.7)
-					background-color alpha($inputColor, 0.3)
+					.cell-hint
+						font-size 8px
+						height 10px
+						width 10px
+						line-height 10px
+			
+				&.editable
+					cursor pointer
+					background none
+					
+					.cell-value, .cell-hints
+						color $inputColor
+					
+					.cell-hints.show-hints
+						display block
+						
+					&:hover, &.selected
+						border 1px solid alpha($inputColor, 0.7)
+						background-color alpha($inputColor, 0.3)
 
 	#input-grid
 		display inline-block
@@ -166,3 +170,13 @@ body
 			&.right
 				float right
 
+
+// Animation definition for game over
+@keyframes spin {
+    from {
+    	transform rotate(0deg)
+    }
+    to {
+    	transform rotate(360deg)
+    }
+}

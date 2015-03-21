@@ -1,6 +1,4 @@
-var SudokuGrid, c, constants, createSudokuVue, sudoku, sudokuVue;
-
-c = console;
+var SudokuGrid, constants, createSudokuVue, sudoku, sudokuVue;
 
 sudokuVue = null;
 
@@ -10,7 +8,7 @@ constants = {
   blockSize: 3,
   numSwaps: 10,
   numAnimFrames: 30,
-  editableProbability: 0.5
+  editableProbability: 0.4
 };
 
 $(function() {
@@ -49,7 +47,8 @@ createSudokuVue = function() {
     data: {
       showHints: false,
       sudoku: new SudokuGrid(constants.blockSize),
-      selectedIndex: null
+      selectedIndex: null,
+      gameOver: false
     },
     methods: {
       loop: function(size) {
@@ -67,19 +66,20 @@ createSudokuVue = function() {
       newGame: function() {
         this.sudoku.newGame();
         this.selectedIndex = null;
+        this.showHints = false;
+        this.gameOver = false;
         return requestAnimationFrame(this.animateShuffle);
       },
       onCellClick: function(index) {
-        console.log("cellClick", index);
         if (sudoku.editableMask[index]) {
           return this.selectedIndex = index;
         }
       },
       onInputClick: function(val) {
-        console.log("inputClick", val);
         if (this.selectedIndex !== null) {
           this.sudoku.grid.$set(this.selectedIndex, val);
-          return this.sudoku.updateHintGrid();
+          this.sudoku.updateHintGrid();
+          return this.gameOver = this.sudoku.isGridFilled();
         }
       },
       animateShuffle: function() {
@@ -250,7 +250,7 @@ SudokuGrid = (function() {
    */
 
   SudokuGrid.prototype.randomizeGrid = function() {
-    var blockSize, col, grid, i, k, l, m, n, n1, n2, numCells, o, offset, p, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, replaceMap, row, shuffledGridChars, swap;
+    var blockSize, c, col, grid, i, k, l, m, n, n1, n2, numCells, o, offset, p, q, ref, ref1, ref2, ref3, ref4, ref5, ref6, replaceMap, row, shuffledGridChars, swap;
     grid = this.grid;
     shuffledGridChars = _.shuffle(this.gridChars);
     replaceMap = _.object(this.gridChars, shuffledGridChars);
@@ -408,6 +408,18 @@ SudokuGrid = (function() {
       }
     }
     return hintGrid;
+  };
+
+
+  /*
+  	Used for checking whether the game is finished.
+  	If all cells in grid are filled then it returns true, otherwise false
+   */
+
+  SudokuGrid.prototype.isGridFilled = function() {
+    return _.filter(this.grid, function(val) {
+      return val === "";
+    }).length === 0;
   };
 
   return SudokuGrid;

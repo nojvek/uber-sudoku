@@ -1,5 +1,4 @@
 # Storing some variables in global access for easy debugging
-c = console
 sudokuVue = null
 sudoku = null
 
@@ -8,12 +7,12 @@ constants =
 	blockSize: 3
 	numSwaps: 10
 	numAnimFrames: 30
-	editableProbability: 0.5
+	editableProbability: 0.4
 
 
 # '$ ->' is the Jquery on ready call back. Coffeescript is neat isn't it.
 $ ->
-	# If size url param is present then we change the grid size accordingly
+	# If size url param is present then we change the block size accordingly
 	parseUrlVars = ->
 		queryMatch = location.search.match(/size=(\d)/)
 		if queryMatch and (queryMatch[1] == "2" or queryMatch[1] == "4")
@@ -53,6 +52,7 @@ createSudokuVue = ->
 			showHints: false
 			sudoku: new SudokuGrid(constants.blockSize)
 			selectedIndex: null
+			gameOver: false
 
 		methods:
 			loop: (size) -> _.range(0, size * size)
@@ -68,18 +68,19 @@ createSudokuVue = ->
 			newGame: ->
 				@sudoku.newGame()
 				@selectedIndex = null
+				@showHints = false
+				@gameOver = false
 				requestAnimationFrame(@animateShuffle)
 
 			onCellClick: (index) ->
-				console.log "cellClick", index
 				if sudoku.editableMask[index]
 					@selectedIndex = index
 
 			onInputClick: (val) ->
-				console.log "inputClick", val
 				if @selectedIndex != null
 					@sudoku.grid.$set(@selectedIndex, val)
 					@sudoku.updateHintGrid()
+					@gameOver = @sudoku.isGridFilled()
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
@@ -316,3 +317,10 @@ class SudokuGrid
 					hintMap[char] = if present[char] then "" else char
 
 		return hintGrid
+
+	###
+	Used for checking whether the game is finished.
+	If all cells in grid are filled then it returns true, otherwise false
+	###
+	isGridFilled: ->
+		return _.filter(@grid, (val) -> val == "").length == 0
