@@ -10,7 +10,7 @@ constants = {
   blockSize: 3,
   numSwaps: 10,
   numAnimFrames: 30,
-  editableProbability: 0.7
+  editableProbability: 0.5
 };
 
 $(function() {
@@ -36,20 +36,19 @@ $(function() {
       top: (wh - ch * scale) / 2
     });
   };
-  sudokuVue = createSudokuVue();
   parseUrlVars();
-  sudokuVue.newGame();
+  sudokuVue = createSudokuVue();
   sudoku = sudokuVue.sudoku;
   $(window).on('resize', autoScaleGrid);
   return requestAnimationFrame(autoScaleGrid);
 });
 
 createSudokuVue = function() {
-  return new Vue({
+  sudokuVue = new Vue({
     el: "#sudoku-container",
     data: {
       showHints: false,
-      sudoku: null,
+      sudoku: new SudokuGrid(constants.blockSize),
       selectedIndex: null
     },
     methods: {
@@ -66,7 +65,7 @@ createSudokuVue = function() {
         return row * size * size + col;
       },
       newGame: function() {
-        this.sudoku = new SudokuGrid(constants.blockSize);
+        this.sudoku.newGame();
         this.selectedIndex = null;
         return requestAnimationFrame(this.animateShuffle);
       },
@@ -80,7 +79,7 @@ createSudokuVue = function() {
         console.log("inputClick", val);
         if (this.selectedIndex !== null) {
           this.sudoku.grid.$set(this.selectedIndex, val);
-          return this.sudoku.updateHintTable();
+          return this.sudoku.updateHintGrid();
         }
       },
       animateShuffle: function() {
@@ -92,7 +91,7 @@ createSudokuVue = function() {
         chars = this.sudoku.gridChars;
         frameCounter = 0;
         renderFrame = function() {
-          var elem, i, k, len1, results;
+          var elem, i, k, len, results1;
           ++frameCounter;
           $cellValues.each(function(i, elem) {
             return elem.innerText = _.sample(chars);
@@ -100,18 +99,20 @@ createSudokuVue = function() {
           if (frameCounter < constants.numAnimFrames) {
             return requestAnimationFrame(renderFrame);
           } else {
-            results = [];
-            for (i = k = 0, len1 = $cellValues.length; k < len1; i = ++k) {
+            results1 = [];
+            for (i = k = 0, len = $cellValues.length; k < len; i = ++k) {
               elem = $cellValues[i];
-              results.push(elem.innerText = innerTexts[i]);
+              results1.push(elem.innerText = innerTexts[i]);
             }
-            return results;
+            return results1;
           }
         };
         return requestAnimationFrame(renderFrame);
       }
     }
   });
+  sudokuVue.newGame();
+  return sudokuVue;
 };
 
 
@@ -147,60 +148,72 @@ SudokuGrid = (function() {
   		1 means the value can be edited by the user
    */
   function SudokuGrid(blockSize) {
-    var charA, i;
+    var charA, charF, i;
     if (blockSize == null) {
       blockSize = 3;
     }
     if (!(blockSize >= 2 && blockSize <= 4)) {
       throw new Error("Grid Size should be between 2 and 4");
     }
-    charA = 97;
     switch (blockSize) {
       case 2:
         this.gridChars = (function() {
-          var k, results;
-          results = [];
-          for (i = k = 1; k < 5; i = k += 1) {
-            results.push(i.toString());
+          var k, results1;
+          results1 = [];
+          for (i = k = 1; k <= 4; i = k += 1) {
+            results1.push(i.toString());
           }
-          return results;
+          return results1;
         })();
         break;
       case 3:
         this.gridChars = (function() {
-          var k, results;
-          results = [];
-          for (i = k = 1; k < 10; i = k += 1) {
-            results.push(i.toString());
+          var k, results1;
+          results1 = [];
+          for (i = k = 1; k <= 9; i = k += 1) {
+            results1.push(i.toString());
           }
-          return results;
+          return results1;
         })();
         break;
       case 4:
+        charA = 97;
+        charF = charA + 5;
         this.gridChars = (function() {
-          var k, results;
-          results = [];
-          for (i = k = 0; k < 10; i = k += 1) {
-            results.push(i.toString());
+          var k, results1;
+          results1 = [];
+          for (i = k = 0; k <= 9; i = k += 1) {
+            results1.push(i.toString());
           }
-          return results;
+          return results1;
         })();
         this.gridChars = this.gridChars.concat((function() {
-          var k, ref, ref1, results;
-          results = [];
-          for (i = k = ref = charA, ref1 = charA + 6; k < ref1; i = k += 1) {
-            results.push(String.fromCharCode(i));
+          var k, ref, ref1, results1;
+          results1 = [];
+          for (i = k = ref = charA, ref1 = charF; k <= ref1; i = k += 1) {
+            results1.push(String.fromCharCode(i));
           }
-          return results;
+          return results1;
         })());
     }
     this.blockSize = blockSize;
     this.numCells = blockSize * blockSize;
     this.grid = this.createIdentityGrid();
+    this.editableMask = [];
+    this.hintGrid = this.createHintGrid();
+  }
+
+
+  /*
+  	Create a new sudoku layout
+   */
+
+  SudokuGrid.prototype.newGame = function() {
+    this.grid = this.createIdentityGrid();
     this.randomizeGrid();
     this.editableMask = this.createRandomEditableMask();
-    this.hintGrid = this.createHintTable();
-  }
+    return this.updateHintGrid();
+  };
 
 
   /*
@@ -230,44 +243,72 @@ SudokuGrid = (function() {
     return grid;
   };
 
+
+  /*
+  	Algorithm based on http://blog.forret.com/2006/08/a-sudoku-challenge-generator/
+  	We do an substitute replace, swap between blocks, cols and rows
+   */
+
   SudokuGrid.prototype.randomizeGrid = function() {
-    var blockSize, col, grid, k, l, m, n, n1, n2, numCells, o, offset, p, ref, ref1, ref2, ref3, ref4, ref5, replaceMap, row, shuffledGridChars, swap;
+    var blockSize, col, grid, i, k, l, m, n, n1, n2, numCells, o, offset, ref, ref1, ref2, ref3, ref4, replaceMap, row, shuffledGridChars, swap;
     grid = this.grid;
     shuffledGridChars = _.shuffle(this.gridChars);
     replaceMap = _.object(this.gridChars, shuffledGridChars);
     blockSize = this.blockSize;
     numCells = this.numCells;
-    swap = function(r1, c1, r2, c2) {
+    for (i = k = 0, ref = this.grid.length; k < ref; i = k += 1) {
+      grid[i] = replaceMap[grid[i]];
+    }
+    swap = function(row1, col1, row2, col2) {
       var temp;
-      temp = grid[r1 * numCells + c1];
-      grid[r1 * numCells + c1] = grid[r2 * numCells + c2];
-      return grid[r2 * numCells + c2] = temp;
+      temp = grid[row1 * numCells + col1];
+      grid[row1 * numCells + col1] = grid[row2 * numCells + col2];
+      return grid[row2 * numCells + col2] = temp;
     };
-    for (c = k = 0, ref = constants.numSwaps; k < ref; c = k += 1) {
-      offset = c % blockSize;
-      n1 = Math.floor(Math.random() * blockSize) * blockSize + offset;
-      n2 = Math.floor(Math.random() * blockSize) * blockSize + offset;
-      for (row = l = 0, ref1 = numCells; l < ref1; row = l += 1) {
-        swap(row, n1, row, n2);
-      }
-    }
-    for (c = m = 0, ref2 = constants.numSwaps; m < ref2; c = m += 1) {
+    for (c = l = 0, ref1 = constants.numSwaps; l < ref1; c = l += 1) {
       offset = (c % blockSize) * blockSize;
       n1 = Math.floor(Math.random() * blockSize) + offset;
       n2 = Math.floor(Math.random() * blockSize) + offset;
-      for (row = n = 0, ref3 = numCells; n < ref3; row = n += 1) {
+      for (row = m = 0, ref2 = numCells; m < ref2; row = m += 1) {
         swap(row, n1, row, n2);
       }
     }
-    for (c = o = 0, ref4 = constants.numSwaps; o < ref4; c = o += 1) {
+    for (c = n = 0, ref3 = constants.numSwaps; n < ref3; c = n += 1) {
       offset = (c % blockSize) * blockSize;
       n1 = Math.floor(Math.random() * blockSize) + offset;
       n2 = Math.floor(Math.random() * blockSize) + offset;
-      for (col = p = 0, ref5 = numCells; p < ref5; col = p += 1) {
+      for (col = o = 0, ref4 = numCells; o < ref4; col = o += 1) {
         swap(n1, col, n2, col);
       }
     }
+    this.logGrid(grid);
     return grid;
+  };
+
+
+  /*
+  	Log the grid to console before we mask the editables
+   */
+
+  SudokuGrid.prototype.logGrid = function(grid) {
+    var i, k, ref, str;
+    str = "";
+    for (i = k = 0, ref = grid.length; k < ref; i = k += 1) {
+      if (i > 0) {
+        if (i % this.blockSize === 0) {
+          str += "  ";
+        }
+        if (i % this.numCells === 0) {
+          str += "\n";
+          if (Math.floor(i / this.numCells) % this.blockSize === 0) {
+            str += "\n";
+          }
+        }
+      }
+      str += grid[i] + " ";
+    }
+    console.log("Correct Solution:");
+    return console.log(str);
   };
 
 
@@ -295,22 +336,18 @@ SudokuGrid = (function() {
 
   /*
   	Create a blank hint table, inside each cell we store an hash map (object)
-  	with keys as possible choices
+  	with keys as possible choices. For cells that have vva
    */
 
-  SudokuGrid.prototype.createHintTable = function() {
-    var char, hintGrid, hintMap, i, k, l, len1, ref, ref1;
+  SudokuGrid.prototype.createHintGrid = function() {
+    var char, hintGrid, hintMap, i, k, l, len, ref, ref1;
     hintGrid = [];
     for (i = k = 0, ref = this.grid.length; k < ref; i = k += 1) {
       hintMap = {};
-      if (this.editableMask[i] === 0) {
-        hintMap[this.grid[i]] = this.grid[i];
-      } else {
-        ref1 = this.gridChars;
-        for (l = 0, len1 = ref1.length; l < len1; l++) {
-          char = ref1[l];
-          hintMap[char] = char;
-        }
+      ref1 = this.gridChars;
+      for (l = 0, len = ref1.length; l < len; l++) {
+        char = ref1[l];
+        hintMap[char] = char;
       }
       hintGrid.push(hintMap);
     }
@@ -319,79 +356,50 @@ SudokuGrid = (function() {
 
 
   /*
-  	Remove all other values apart from the passed value for the cell
-  	Trim other cells by row, col and block
-  	If in the process of trimming we encounter a naked singlet
-  	then we add it to a queue and trim it in a another pass
+  	For every blank cell in the grid we update the possible values it can have
+  	We search through the column, row and block. Standard sudoku validation
+  	If there is a dead lock then the user will see a cell with no hints
+  	In that case he has to undo the most recent selection and chose another hint
    */
 
-  SudokuGrid.prototype.trimHintTable = function(row, col, index) {
-    var editableMask, hintGrid, item, len, processItem, removeHint, size, trimQueue;
-    c.log("sudoku.trimHintTable(", row, col, index, ")");
+  SudokuGrid.prototype.updateHintGrid = function() {
+    var blockSize, char, grid, hintGrid, hintMap, i, k, l, len, numCells, present, ref, ref1, scanCell;
     hintGrid = this.hintGrid;
-    editableMask = this.editableMask;
-    len = this.numCells;
-    size = this.blockSize;
-    trimQueue = [
-      {
-        row: row,
-        col: col,
-        index: index
-      }
-    ];
-    removeHint = (function(_this) {
-      return function(row, col, index) {
-        var hintHash, hints;
-        hintHash = hintGrid[row][col];
-        if (hintHash[index]) {
-          delete hintHash[index];
-          hints = Object.keys(hintHash);
-          if (hints.length === 1) {
-            c.log("orphan", row, col, hints);
-            trimQueue.push({
-              row: row,
-              col: col,
-              index: hints[0]
-            });
+    blockSize = this.blockSize;
+    grid = this.grid;
+    numCells = this.numCells;
+    scanCell = (function(_this) {
+      return function(row, col) {
+        var blockCol, blockRow, i, j, k, l, m, n, ref, ref1, ref2, ref3, results;
+        results = {};
+        for (i = k = 0, ref = numCells; k < ref; i = k += 1) {
+          results[grid[row * numCells + i]] = true;
+        }
+        for (i = l = 0, ref1 = numCells; l < ref1; i = l += 1) {
+          results[grid[i * numCells + col]] = true;
+        }
+        blockRow = Math.floor(row / blockSize) * blockSize;
+        blockCol = Math.floor(col / blockSize) * blockSize;
+        for (i = m = 0, ref2 = blockSize; m < ref2; i = m += 1) {
+          for (j = n = 0, ref3 = blockSize; n < ref3; j = n += 1) {
+            results[grid[(i + blockRow) * numCells + col + blockCol]] = true;
           }
         }
+        return results;
       };
     })(this);
-    processItem = function(row, col, index) {
-      var blockCol, blockRow, cellCol, cellRow, hintHash, i, j, k, l, m, n, ref, ref1, ref2, ref3;
-      hintHash = hintGrid[row][col];
-      if (hintHash) {
-        hintGrid[row][col] = {};
-        hintGrid[row][col][index] = true;
-        for (i = k = 0, ref = len; k < ref; i = k += 1) {
-          if (i !== row) {
-            removeHint(i, col, index);
-          }
+    for (i = k = 0, ref = hintGrid.length; k < ref; i = k += 1) {
+      hintMap = hintGrid[i];
+      if (this.editableMask[i] === 1) {
+        present = scanCell(Math.floor(i / numCells), i % numCells);
+        ref1 = this.gridChars;
+        for (l = 0, len = ref1.length; l < len; l++) {
+          char = ref1[l];
+          hintMap[char] = present[char] ? "" : char;
         }
-        for (j = l = 0, ref1 = len; l < ref1; j = l += 1) {
-          if (j !== col) {
-            removeHint(row, j, index);
-          }
-        }
-        blockRow = Math.floor(row / size) * size;
-        blockCol = Math.floor(col / size) * size;
-        for (i = m = 0, ref2 = size; m < ref2; i = m += 1) {
-          cellRow = blockRow + i;
-          for (j = n = 0, ref3 = size; n < ref3; j = n += 1) {
-            cellCol = blockCol + j;
-            if (cellCol !== row && cellCol !== col) {
-              removeHint(blockRow + i, blockCol + j, index);
-            }
-          }
-        }
-        return true;
       }
-    };
-    while (trimQueue.length > 0) {
-      item = trimQueue.shift();
-      processItem(item.row, item.col, item.index);
     }
-    return false;
+    return hintGrid;
   };
 
   return SudokuGrid;

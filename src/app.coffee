@@ -1,13 +1,17 @@
+# Storing some variables in global access for easy debugging
 c = console
 sudokuVue = null
 sudoku = null
 
+# We define the app constants in an object rather than having them in global scope
 constants =
 	blockSize: 3
 	numSwaps: 10
 	numAnimFrames: 30
-	editableProbability: 0.7
+	editableProbability: 0.5
 
+
+# '$ ->' is the Jquery on ready call back. Coffeescript is neat isn't it.
 $ ->
 	# If size url param is present then we change the grid size accordingly
 	parseUrlVars = ->
@@ -29,9 +33,8 @@ $ ->
 
 
 	# This acts as our main method
-	sudokuVue = createSudokuVue()
 	parseUrlVars()
-	sudokuVue.newGame()
+	sudokuVue = createSudokuVue()
 	sudoku = sudokuVue.sudoku #for debugging
 
 	$(window).on('resize', autoScaleGrid)
@@ -44,11 +47,11 @@ $ ->
 # Uber said not to use backbone, so I'm iffy whether they'll approve of this.
 # I think its very simple, elegant and descriptive code.
 createSudokuVue = ->
-	return new Vue
+	sudokuVue =  new Vue
 		el: "#sudoku-container"
 		data:
 			showHints: false
-			sudoku: null
+			sudoku: new SudokuGrid(constants.blockSize)
 			selectedIndex: null
 
 		methods:
@@ -63,7 +66,7 @@ createSudokuVue = ->
 				return row * size * size + col
 
 			newGame: ->
-				@sudoku = new SudokuGrid(constants.blockSize)
+				@sudoku.newGame()
 				@selectedIndex = null
 				requestAnimationFrame(@animateShuffle)
 
@@ -76,7 +79,7 @@ createSudokuVue = ->
 				console.log "inputClick", val
 				if @selectedIndex != null
 					@sudoku.grid.$set(@selectedIndex, val)
-					@sudoku.updateHintTable()
+					@sudoku.updateHintGrid()
 
 			# Do a fast fake animation when newGame is generated
 			animateShuffle: ->
@@ -94,10 +97,12 @@ createSudokuVue = ->
 						requestAnimationFrame(renderFrame)
 					else
 						# On last frame add original innerText
-						for elem, i in $cellValues
-							elem.innerText = innerTexts[i]
+						elem.innerText = innerTexts[i] for elem, i in $cellValues
 
 				requestAnimationFrame(renderFrame)
+
+	sudokuVue.newGame()
+	return sudokuVue
 
 ###
 SudokuGrid contains functions for grid generation, validation and hinting
@@ -132,22 +137,32 @@ class SudokuGrid
 		if not (blockSize >= 2 and blockSize <= 4)
 			throw new Error("Grid Size should be between 2 and 4")
 
-		charA = 97
 		switch blockSize
 			when 2
-				@gridChars = (i.toString() for i in [1 ... 5] by 1)
+				@gridChars = (i.toString() for i in [1 .. 4] by 1)
 			when 3
-				@gridChars = (i.toString() for i in [1 ... 10] by 1)
+				@gridChars = (i.toString() for i in [1 .. 9] by 1)
 			when 4
-				@gridChars = (i.toString() for i in [0 ... 10] by 1)
-				@gridChars = @gridChars.concat (String.fromCharCode(i) for i in [charA ... charA + 6] by 1)
+				charA = 97
+				charF = charA + 5
+				@gridChars = (i.toString() for i in [0 .. 9] by 1)
+				@gridChars = @gridChars.concat (String.fromCharCode(i) for i in [charA .. charF] by 1)
 		
 		@blockSize = blockSize
 		@numCells = blockSize * blockSize
 		@grid = @createIdentityGrid()
+		@editableMask = []
+		@hintGrid = @createHintGrid()
+
+
+	###
+	Create a new sudoku layout
+	###
+	newGame: ->
+		@grid = @createIdentityGrid()
 		@randomizeGrid()
 		@editableMask = @createRandomEditableMask()
-		@hintGrid = @createHintTable()
+		@updateHintGrid()
 
 
 	###
@@ -175,6 +190,10 @@ class SudokuGrid
 		return grid
 
 
+	###
+	Algorithm based on http://blog.forret.com/2006/08/a-sudoku-challenge-generator/
+	We do an substitute replace, swap between blocks, cols and rows
+	###
 	randomizeGrid: ->
 		grid = @grid
 		shuffledGridChars = _.shuffle(@gridChars)
@@ -184,42 +203,52 @@ class SudokuGrid
 
 		# Think of this like an enigma cipher. 
 		# We substitute one character with another
-		#for i in [0...@grid.length] by 1
-		#	grid[i] = replaceMap[grid[i]]
+		grid[i] = replaceMap[grid[i]] for i in [0...@grid.length] by 1
 
 		# We swap between blocks, rows and cols
-		# Algorithm based on http://blog.forret.com/2006/08/a-sudoku-challenge-generator/
+		swap = (row1, col1, row2, col2) ->
+			temp = grid[row1 * numCells + col1]
+			grid[row1 * numCells + col1] = grid[row2 * numCells + col2]
+			grid[row2 * numCells + col2] = temp
 
-		swap = (r1, c1, r2, c2) ->
-			temp = grid[r1 * numCells + c1]
-			grid[r1 * numCells + c1] = grid[r2 * numCells + c2]
-			grid[r2 * numCells + c2] = temp
-
-		for c in [0...constants.numSwaps] by 1
-			offset = c % blockSize
-			n1 = Math.floor(Math.random() * blockSize) * blockSize + offset
-			n2 = Math.floor(Math.random() * blockSize) * blockSize + offset
-
-			for row in [0...numCells] by 1
-				swap(row, n1, row, n2)
+		# for c in [0...constants.numSwaps] by 1
+		# 	offset = c % blockSize
+		# 	n1 = Math.floor(Math.random() * blockSize) * blockSize + offset
+		# 	n2 = Math.floor(Math.random() * blockSize) * blockSize + offset
+		# 	swap(row, n1, row, n2) for row in [0...numCells] by 1
 
 		for c in [0...constants.numSwaps] by 1
 			offset = (c % blockSize) * blockSize
 			n1 = Math.floor(Math.random() * blockSize) + offset
 			n2 = Math.floor(Math.random() * blockSize) + offset
-
-			for row in [0...numCells] by 1
-				swap(row, n1, row, n2)
-
+			swap(row, n1, row, n2) for row in [0...numCells] by 1
+				
 		for c in [0...constants.numSwaps] by 1
 			offset = (c % blockSize) * blockSize
 			n1 = Math.floor(Math.random() * blockSize) + offset
 			n2 = Math.floor(Math.random() * blockSize) + offset
+			swap(n1, col, n2, col) for col in [0...numCells] by 1		
 
-			for col in [0...numCells] by 1
-				swap(n1, col, n2, col)		
-
+		@logGrid(grid) 
 		return grid
+
+
+	###
+	Log the grid to console before we mask the editables
+	###
+	logGrid: (grid) ->
+		str = ""
+		for i in [0...grid.length] by 1
+			if i > 0
+				if i % @blockSize == 0 then str += "  "
+				if i % @numCells == 0
+					str += "\n"
+					if Math.floor(i / @numCells) % @blockSize == 0 then str += "\n"
+
+			str += grid[i] + " "
+
+		console.log "Correct Solution:"
+		console.log str
 
 
 	###
@@ -230,81 +259,60 @@ class SudokuGrid
 
 		for i in [0...@grid.length] by 1
 			if Math.random() > constants.editableProbability then val = 0 else val = 1
-			if val == 1 then @grid[i] = ""	
+			if val == 1 then @grid[i] = ""
 			editableMask.push(val)
 		return editableMask
 
 
 	###
 	Create a blank hint table, inside each cell we store an hash map (object)
-	with keys as possible choices
+	with keys as possible choices. For cells that have vva
 	###
-	createHintTable: ->
+	createHintGrid: ->
 		hintGrid = []
 		for i in [0...@grid.length] by 1
 			hintMap = {}
-			if @editableMask[i] == 0
-				hintMap[@grid[i]] = @grid[i]
-			else 
-				for char in @gridChars
-					hintMap[char] = char
+			hintMap[char] = char for char in @gridChars
 			hintGrid.push(hintMap)
 		return hintGrid
 
+
 	###
-	Remove all other values apart from the passed value for the cell
-	Trim other cells by row, col and block
-	If in the process of trimming we encounter a naked singlet
-	then we add it to a queue and trim it in a another pass
+	For every blank cell in the grid we update the possible values it can have
+	We search through the column, row and block. Standard sudoku validation
+	If there is a dead lock then the user will see a cell with no hints
+	In that case he has to undo the most recent selection and chose another hint 
 	###
-	trimHintTable: (row, col, index) ->
-		c.log "sudoku.trimHintTable(", row, col, index, ")"
+	updateHintGrid: ->
 		hintGrid = @hintGrid
-		editableMask = @editableMask
-		len = @numCells
-		size = @blockSize
-		trimQueue = [{row: row, col: col, index: index}]
+		blockSize = @blockSize
+		grid = @grid
+		numCells = @numCells
 
-		removeHint = (row, col, index) =>
-			hintHash = hintGrid[row][col]
-			if hintHash[index]
-				delete hintHash[index]
-				hints = Object.keys(hintHash)
-				if hints.length == 1
-					c.log "orphan", row, col, hints
-					trimQueue.push(row: row, col: col, index: hints[0])
+		scanCell = (row, col) =>
+			results = {}
+			for i in [0...numCells] by 1
+				results[grid[row * numCells + i]] = true
 
-			return
+			for i in [0...numCells] by 1
+				results[grid[i * numCells + col]] = true
 
-		processItem = (row, col, index) ->
-			hintHash = hintGrid[row][col]
-			if hintHash
-				hintGrid[row][col] = {}
-				hintGrid[row][col][index] = true
+			blockRow = Math.floor(row / blockSize) * blockSize
+			blockCol = Math.floor(col / blockSize) * blockSize
 
-				for i in [0...len] by 1
-					if i != row
-						removeHint(i, col, index)
+			for i in [0...blockSize] by 1
+				for j in [0...blockSize] by 1
+					results[grid[(i + blockRow) * numCells + col + blockCol]] = true
 
-				for j in [0...len] by 1
-					if j != col
-						removeHint(row, j, index)
+			return results
 
-				blockRow = Math.floor(row/size) * size
-				blockCol = Math.floor(col/size) * size
+		for i in [0...hintGrid.length] by 1
+			hintMap = hintGrid[i]
 
-				for i in [0...size] by 1
-					cellRow = blockRow + i
-					for j in [0...size] by 1
-						cellCol = blockCol + j
-						if cellCol != row and cellCol!= col
-							removeHint(blockRow + i, blockCol + j, index)
+			# if cell has value then only that value is present as hint
+			if @editableMask[i] == 1
+				present = scanCell(Math.floor(i / numCells), i % numCells)
+				for char in @gridChars
+					hintMap[char] = if present[char] then "" else char
 
-				return true
-
-		while trimQueue.length > 0
-			item = trimQueue.shift()
-			processItem(item.row, item.col, item.index)
-
-
-		return false
+		return hintGrid
