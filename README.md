@@ -28,13 +28,13 @@ This is my attempt at the Uber programming challenge.
 
 Desktop
 
-![](assets/screenshots/desktop.jpg?raw=true)
+![](screenshots/desktop.jpg?raw=true)
 
 iPhone
 
-![](assets/screenshots/iphone.jpg?raw=true)
-![](assets/screenshots/iphone_app.jpg?raw=true)
+![](screenshots/iphone.jpg?raw=true)
+![](screenshots/iphone_app.jpg?raw=true)
 
 iPad
 
-![](assets/screenshots/ipad.jpg?raw=true)
+![](screenshots/ipad.jpg?raw=true)
